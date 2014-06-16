@@ -196,7 +196,7 @@ public class Android_ball_physicsActivity extends Activity
                 paint.setShader(null);
                 //draw circle end
 				paint.setColor(Color.BLACK);
-				canvas.drawText(b.color1+","+b.color2, b.x, b.y, paint);
+				//canvas.drawText(b.color1+","+b.color2, b.x, b.y, paint);
             }
             if (colorId>0)
             {
@@ -216,13 +216,18 @@ public class Android_ball_physicsActivity extends Activity
 			paint.setColor(Color.WHITE);
 			canvas.drawText(msg, 35, 15, paint);
 			//
-			Ball nb=new Ball(10,10,10);
-				rgbColor(colors[(colorId+1)%colors.length]);
+			for(int ii=0;ii<10;ii++)
+			{
+				
+			int x=ii*20+40;
+			Ball nb=new Ball(x,45,10);
+				rgbColor(colors[(colorId+1+ii)%colors.length]);
                 nb.draw(canvas, paint);
-				rgbColor(colors[(colorId+2)%colors.length]);
+				rgbColor(colors[(colorId+2+ii)%colors.length]);
 				canvas.drawCircle(nb.x, nb.y, (float)(nb.radius * Constants.oneByGoldenRatio), paint);
 		
             }
+			}
 			//draw comments x;y
 			/*
             for(Ball b:pool)
@@ -234,6 +239,8 @@ public class Android_ball_physicsActivity extends Activity
 			   	canvas.drawText(""+(int)b.x+";"+(int)b.y, b.x+b.radius+5, b.y-b.radius-5, paint);
 			}
 			*/
+			
+			/*
 			//x.y.z gravity value print
 			String gmsg="x={1}, y={2}, z={3}";
 			gmsg=gmsg.replace("{1}",""+gx)
@@ -242,6 +249,7 @@ public class Android_ball_physicsActivity extends Activity
 			paint.setColor(Color.WHITE);
 			paint.setTextSize(20); 
 		   	canvas.drawText(gmsg, 5, 45, paint);
+			*/
 			biga.Point p0=new biga.Point();
 			p0.x=200;
 			p0.y=350;
