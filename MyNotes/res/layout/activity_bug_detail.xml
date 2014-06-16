@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	android:background="#ffffff"
+	android:padding="5dip"
+	>
+	<LinearLayout
+		xmlns:android="http://schemas.android.com/apk/res/android"
+		android:orientation="horizontal"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_gravity="center_horizontal"
+		>							<!-- 显示TFS id线性布局 -->
+		<TextView
+			android:layout_width="100px"
+			android:layout_height="wrap_content"
+			android:textSize="18px"
+			android:textColor="@color/text"
+			android:layout_gravity="left|center_vertical"
+			android:text="TFS Id"
+			/>
+		<EditText
+			android:id="@+id/tfsId"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			/>
+ 		</LinearLayout>
+	<LinearLayout
+		xmlns:android="http://schemas.android.com/apk/res/android"
+		android:orientation="horizontal"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		>							<!-- 显示bug title的线性布局 -->
+		<TextView
+			android:layout_width="100px"
+			android:layout_height="wrap_content"
+			android:textSize="18px"
+			android:textColor="@color/text"
+			android:layout_gravity="center_vertical|left"
+			android:text="Bug Title"
+			/>
+		<EditText
+			android:id="@+id/BugTitle"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			/>
+ 		</LinearLayout>
+	<LinearLayout
+		xmlns:android="http://schemas.android.com/apk/res/android"
+		android:orientation="horizontal"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		>										<!-- 显示联系人手机号码的线性布局 -->
+		<TextView
+			android:layout_width="100px"
+			android:layout_height="wrap_content"
+			android:textSize="18px"
+			android:textColor="@color/text"
+			android:layout_gravity="left|center_vertical" 
+			android:text="Description"
+			/>
+		<EditText
+			android:id="@+id/BugDescription"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			/>
+ 		</LinearLayout>
+	<LinearLayout
+		xmlns:android="http://schemas.android.com/apk/res/android"
+		android:orientation="horizontal"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		>										<!-- 显示联系人电子邮件的线性布局 -->
+		<TextView
+			android:layout_width="100px"
+			android:layout_height="wrap_content"
+			android:textSize="18px"
+			android:textColor="@color/text"
+			android:layout_gravity="left|center_vertical"
+			android:text="Reporter"
+			/>
+		<EditText
+			android:id="@+id/author"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			/>
+ 		</LinearLayout> 
+	
+ 	<Button
+ 		android:id="@+id/ibSave"
+ 		android:layout_width="80dip"
+ 		android:layout_height="wrap_content"
+ 		android:layout_gravity="center"
+ 		android:text="Save Add"
+ 		/>
+</LinearLayout>

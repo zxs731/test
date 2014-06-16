@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	android:background="#ffffff"
+	android:padding="5dip"
+	>
+	<LinearLayout
+		xmlns:android="http://schemas.android.com/apk/res/android"
+		android:orientation="vertical"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_gravity="center_horizontal"
+		>							<!-- 显示TFS id线性布局 -->
+		<TextView
+			android:layout_width="100px"
+			android:layout_height="wrap_content"
+			android:textSize="18px"
+			android:textColor="@color/text"
+			android:layout_gravity="left|center_vertical"
+			android:text="Event:"
+			/>
+		<EditText
+			android:id="@+id/EventEt"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:inputType="textMultiLine"
+			/>
+ 		</LinearLayout>
+	
+	
+ 	<Button
+ 		android:id="@+id/btnEventSave"
+ 		android:layout_width="80dip"
+ 		android:layout_height="wrap_content"
+ 		android:layout_gravity="center"
+ 		android:text="Save Add"
+ 		/>
+</LinearLayout>

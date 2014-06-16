@@ -1,0 +1,49 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical" 
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	android:padding="5dip" >
+	<LinearLayout android:orientation="vertical"
+	    android:layout_width="fill_parent"
+		android:layout_height="wrap_content" >
+		<LinearLayout android:orientation="horizontal" 
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:background="#FFBC44">
+			
+			<TextView 
+			android:id="@+id/tfsIdTv"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content" 
+			android:textSize="16dip"
+			android:gravity="center"
+			android:text="" />
+			<TextView 
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content" 
+			android:textSize="16dip"
+			android:gravity="center"
+			android:text=" : " />
+			<TextView 
+			android:id="@+id/bugTitle"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content" 
+			android:textSize="16dip"
+			android:gravity="center"
+			android:text="" />
+		</LinearLayout>
+	</LinearLayout>
+    <!-- <ScrollView
+    	android:layout_width="fill_parent"
+    	android:layout_height="fill_parent"
+    	android:fillViewport="true"
+    	> 声明一个滚动域 -->
+		<ListView	
+			android:id="@+id/lvEvent"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:choiceMode="singleChoice"
+			/> <!-- 声明一个列表域 
+		</ScrollView>-->
+    
+</LinearLayout>
