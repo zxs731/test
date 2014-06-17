@@ -215,8 +215,8 @@ public class Android_ball_physicsActivity extends Activity
 			paint.setTextSize(18); 
 			paint.setColor(Color.WHITE);
 			canvas.drawText(msg, 35, 15, paint);
-			//
-			for(int ii=0;ii<10;ii++)
+			//彩球顺序
+			for(int ii=0;ii<20;ii++)
 			{
 				
 			int x=ii*20+40;
@@ -392,6 +392,7 @@ public class Android_ball_physicsActivity extends Activity
 			int id=colorId;
 			int colorid1= id % colors.length;//(int) (Math.random() * colors.length); 
 			id++;
+		//	id++;
 			int colorid2= id % colors.length;//(int) (Math.random() * colors.length); 
 			colorId++;
 			/*
