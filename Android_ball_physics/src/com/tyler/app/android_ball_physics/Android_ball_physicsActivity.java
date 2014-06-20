@@ -115,12 +115,14 @@ public class Android_ball_physicsActivity extends Activity
 		private float gy;
 		private float gz;
 		private int totalArea;
+		private ArrayList<Ball> functionBalls;
+		
 
         public BallPhysics(Context context)
         {
             super(context);
             init(context);
-		
+
         }
 
         private void init(Context context)
@@ -139,16 +141,35 @@ public class Android_ball_physicsActivity extends Activity
 				0xFF0000,0xFF8000,0xFFD700,0x006600,0x00FF00,0x6B8E23,0x00FFFF,
 				0x66B2FF,0x0000FF,0x7F00FF,0xFF00FF,0xCC0066,0xFF9999,0x808080
             };
-			statusmsg=getResources().getString(
+			statusmsg = getResources().getString(
 				R.string.timekeeping);
             pool = new ArrayList<Ball>();
 		    needremove = new ArrayList<Ball>();	
+		    initalFuncBalls();
 
             Timer timer = new Timer(30, this);
             timer.start();
 
         }
 
+		private void initalFuncBalls(){
+			functionBalls =new ArrayList<Ball>();
+			Ball clickBall=new Ball(55,70,35);
+			clickBall.color1=(colorId ) % colors.length;
+			clickBall.color2=(colorId + 1 ) % colors.length;
+			functionBalls.add(clickBall);
+		}
+		private void drawFuncBalls(Canvas canvas)
+		{
+			//彩球顺序
+			for (Ball b:functionBalls){
+				rgbColor(colors[b.color1]);
+                b.draw(canvas, paint);
+				rgbColor(colors[b.color2]);
+				canvas.drawCircle(b.x, b.y, (float)(b.radius * Constants.oneByGoldenRatio), paint);
+
+            }
+		}
         @Override
         public void tick()
         {
@@ -157,23 +178,24 @@ public class Android_ball_physicsActivity extends Activity
             invalidate();
 
         }
-		private void drawvballs(Canvas canvas ){
+		private void drawvballs(Canvas canvas)
+		{
 			//彩球顺序
-			for(int ii=0;ii<20;ii++)
+			for (int ii=0;ii < 20;ii++)
 			{
 
-				int y=ii*20+40;
-				Ball nb=new Ball(20,y	,10);
-				rgbColor(colors[(colorId+1+ii)%colors.length]);
+				int y=ii * 20 + 40;
+				Ball nb=new Ball(20, y	, 10);
+				rgbColor(colors[(colorId + 1 + ii) % colors.length]);
                 nb.draw(canvas, paint);
-				rgbColor(colors[(colorId+2+ii)%colors.length]);
+				rgbColor(colors[(colorId + 2 + ii) % colors.length]);
 				canvas.drawCircle(nb.x, nb.y, (float)(nb.radius * Constants.oneByGoldenRatio), paint);
 
             }
 		}
 		private int getBallArea(Ball ball)
 		{
-		return (int)(ball.radius*ball.radius*3.14159);
+			return (int)(ball.radius * ball.radius * 3.14159);
 		}
 
         @Override
@@ -182,124 +204,125 @@ public class Android_ball_physicsActivity extends Activity
 
 			//  int id = colorId;
         	int ballsarea=0;
-			totalArea= getHeight()*getWidth();
+			totalArea = getHeight() * getWidth();
             for (Ball b : pool)
             {
-ballsarea+=getBallArea(b);
+				ballsarea += getBallArea(b);
 				rgbColor(colors[b.color1]);
-			/*	RadialGradient  mRadialGradient = new RadialGradient(b.x, b.y, b.radius+2, new int[] {  
-						paint.getColor(),paint.getColor(),paint.getColor(),paint.getColor(),paint.getColor(),paint.getColor() , paint.getColor() ,paint.getColor() ,Color.BLACK}, null,  
-		                    Shader.TileMode.MIRROR);  
-				paint.setShader(mRadialGradient);
-				*/
+				/*	RadialGradient  mRadialGradient = new RadialGradient(b.x, b.y, b.radius+2, new int[] {  
+				 paint.getColor(),paint.getColor(),paint.getColor(),paint.getColor(),paint.getColor(),paint.getColor() , paint.getColor() ,paint.getColor() ,Color.BLACK}, null,  
+				 Shader.TileMode.MIRROR);  
+				 paint.setShader(mRadialGradient);
+				 */
                 b.draw(canvas, paint);
                 paint.setShader(null);
 
                 //change to circle color
 				rgbColor(colors[b.color2]);
-				
+
 				float bcx=b.x;
 				float bcy=b.y;
 				//draw circle
                 canvas.drawCircle(b.x, b.y, (float)(b.radius * Constants.oneByGoldenRatio), paint);
-	/*			
-				//draw Oval begin
-				float c=(float)(b.radius * (Constants.oneByGoldenRatio/2+0.5));
-				
-				LinearGradient mLinearGradient = new LinearGradient(b.x, b.y-c,b.x ,b.y+(b.radius-c), new int[] {  
-	            		Color.WHITE,paint.getColor()}, null,  
-	                    Shader.TileMode.MIRROR);  
-				paint.setShader(mLinearGradient);
-			//	biga.shapes2D. Rectangle rt=new biga.shapes2D. Rectangle ( );
-				
-                canvas.drawOval(new RectF(b.x-c, b.y-c, b.x+c, b.y+(b.radius-c)), paint);
-				*/
-               //canvas.drawRect(new RectF(b.x-c, b.y-c, b.x+c, b.y+(b.radius-c)), paint);
+				/*			
+				 //draw Oval begin
+				 float c=(float)(b.radius * (Constants.oneByGoldenRatio/2+0.5));
+
+				 LinearGradient mLinearGradient = new LinearGradient(b.x, b.y-c,b.x ,b.y+(b.radius-c), new int[] {  
+				 Color.WHITE,paint.getColor()}, null,  
+				 Shader.TileMode.MIRROR);  
+				 paint.setShader(mLinearGradient);
+				 //	biga.shapes2D. Rectangle rt=new biga.shapes2D. Rectangle ( );
+
+				 canvas.drawOval(new RectF(b.x-c, b.y-c, b.x+c, b.y+(b.radius-c)), paint);
+				 */
+				//canvas.drawRect(new RectF(b.x-c, b.y-c, b.x+c, b.y+(b.radius-c)), paint);
                 paint.setShader(null);
                 //draw circle end
 				paint.setColor(Color.BLACK);
 				//canvas.drawText(b.color1+","+b.color2, b.x, b.y, paint);
             }
-            if (colorId>0)
+            if (colorId > 0)
             {
-            //draw score
-        	java.util.Date now = new java.util.Date(System.currentTimeMillis());
-        	float timeUsing = ((float) (now.getTime() - starttime
+				//draw score
+				java.util.Date now = new java.util.Date(System.currentTimeMillis());
+				float timeUsing = ((float) (now.getTime() - starttime
 					.getTime()) / 1000);
-        	timeUsing = (float) (Math.round(timeUsing * 10)) / 10;
-			String msg = statusmsg. replace("{0}",
-					timeUsing + "")
-					.replace("{1}", score+"")
-					.replace("{2}", startremove+"")
-					.replace("{3}",pool.size()+"")
-				//	.replace("{4}",maxBallsswitch+"");
-					.replace("{4}",ballsarea*100/totalArea+"%");
-			//paint.setTextAlign(Align.CENTER);
-			paint.setTextSize(18); 
-			paint.setColor(Color.WHITE);
-			canvas.drawText(msg, 35, 15, paint);
-			//彩球顺序
-			for(int ii=0;ii<20;ii++)
-			{
-				
-			int x=ii*20+40;
-			Ball nb=new Ball(x,40,10);
-				rgbColor(colors[(colorId+1+ii)%colors.length]);
-                nb.draw(canvas, paint);
-				rgbColor(colors[(colorId+2+ii)%colors.length]);
-				canvas.drawCircle(nb.x, nb.y, (float)(nb.radius * Constants.oneByGoldenRatio), paint);
-		
-            }
-			//垂直顺序
-			drawvballs(canvas);
+				timeUsing = (float) (Math.round(timeUsing * 10)) / 10;
+				String msg = statusmsg. replace("{0}",
+												timeUsing + "")
+					.replace("{1}", score + "")
+					.replace("{2}", startremove + "")
+					.replace("{3}", pool.size() + "")
+					//	.replace("{4}",maxBallsswitch+"");
+					.replace("{4}", ballsarea * 100 / totalArea + "%");
+				//paint.setTextAlign(Align.CENTER);
+				paint.setTextSize(18); 
+				paint.setColor(Color.WHITE);
+				canvas.drawText(msg, 35, 15, paint);
+				//彩球顺序
+				for (int ii=0;ii < 20;ii++)
+				{
+
+					int x=ii * 20 + 40;
+					Ball nb=new Ball(x, 40, 10);
+					rgbColor(colors[(colorId + 1 + ii) % colors.length]);
+					nb.draw(canvas, paint);
+					rgbColor(colors[(colorId + 2 + ii) % colors.length]);
+					canvas.drawCircle(nb.x, nb.y, (float)(nb.radius * Constants.oneByGoldenRatio), paint);
+
+				}
+				//垂直顺序
+				drawvballs(canvas);
 			}
 			//draw comments x;y
 			/*
-            for(Ball b:pool)
-			{
-				//radial line
-				paint.setColor(Color.WHITE);
-				canvas.drawLine(b.x,b.y,b.x+b.radius,b.y-b.radius,paint);
-				canvas.drawLine(b.x+b.radius,b.y-b.radius,b.x+b.radius+65,b.y-b.radius,paint);
-			   	canvas.drawText(""+(int)b.x+";"+(int)b.y, b.x+b.radius+5, b.y-b.radius-5, paint);
-			}
-			*/
-			
+			 for(Ball b:pool)
+			 {
+			 //radial line
+			 paint.setColor(Color.WHITE);
+			 canvas.drawLine(b.x,b.y,b.x+b.radius,b.y-b.radius,paint);
+			 canvas.drawLine(b.x+b.radius,b.y-b.radius,b.x+b.radius+65,b.y-b.radius,paint);
+			 canvas.drawText(""+(int)b.x+";"+(int)b.y, b.x+b.radius+5, b.y-b.radius-5, paint);
+			 }
+			 */
+
 			/*
-			//x.y.z gravity value print
-			String gmsg="x={1}, y={2}, z={3}";
-			gmsg=gmsg.replace("{1}",""+gx)
-			.replace("{2}",""+gy)
-			.replace("{3}",""+gz);
-			paint.setColor(Color.WHITE);
-			paint.setTextSize(20); 
-		   	canvas.drawText(gmsg, 5, 45, paint);
-			*/
+			 //x.y.z gravity value print
+			 String gmsg="x={1}, y={2}, z={3}";
+			 gmsg=gmsg.replace("{1}",""+gx)
+			 .replace("{2}",""+gy)
+			 .replace("{3}",""+gz);
+			 paint.setColor(Color.WHITE);
+			 paint.setTextSize(20); 
+			 canvas.drawText(gmsg, 5, 45, paint);
+			 */
 			biga.Point p0=new biga.Point();
-			p0.x=200;
-			p0.y=350;
+			p0.x = 200;
+			p0.y = 350;
 			biga.Point py=new biga.Point();
 			biga.Point px=new biga.Point();
 			biga.Point pz=new biga.Point();
-			py.x=p0.x;
-			py.y=p0.y+gy*10*(-1);
-			px.x=p0.x+gx*10;
-			px.y=p0.y;
-			float part=(float)(gz*10/Math.sqrt(2));
-			pz.x=p0.x+part*(-1);
-			pz.y=p0.y+part;
+			py.x = p0.x;
+			py.y = p0.y + gy * 10 * (-1);
+			px.x = p0.x + gx * 10;
+			px.y = p0.y;
+			float part=(float)(gz * 10 / Math.sqrt(2));
+			pz.x = p0.x + part * (-1);
+			pz.y = p0.y + part;
 			paint.setStrokeWidth(5);
-			canvas.drawLine(p0.x,p0.y,py.x,py.y,paint);
-			canvas.drawLine(p0.x,p0.y,px.x,px.y,paint);
-			canvas.drawLine(p0.x,p0.y,pz.x,pz.y,paint);
+			canvas.drawLine(p0.x, p0.y, py.x, py.y, paint);
+			canvas.drawLine(p0.x, p0.y, px.x, px.y, paint);
+			canvas.drawLine(p0.x, p0.y, pz.x, pz.y, paint);
 			paint.setStrokeWidth(0);
-			canvas.drawText("y: "+gy+" (m/s2)", py.x+20, py.y, paint);
-			canvas.drawText("x: "+gx+" (m/s2)", px.x, px.y-20, paint);
-			canvas.drawText("z: "+gz+" (m/s2)", pz.x+20, pz.y+20, paint);
-		
+			canvas.drawText("y: " + gy + " (m/s2)", py.x + 20, py.y, paint);
+			canvas.drawText("x: " + gx + " (m/s2)", px.x, px.y - 20, paint);
+			canvas.drawText("z: " + gz + " (m/s2)", pz.x + 20, pz.y + 20, paint);
+
+			drawFuncBalls(canvas);
 		}
-			
-      
+
+
 
         private void update()
         {
@@ -355,7 +378,7 @@ ballsarea+=getBallArea(b);
 							{
 								//issame = (a.color1 == b.color1 && a.color2 == b.color2);
 								issame = (a.color1 == b.color1) ;//&& a.color2 == b.color2);
-								
+
 							    if (issame)
 								{
 									needremove.add(b);
@@ -390,47 +413,98 @@ ballsarea+=getBallArea(b);
 			{
 				score++;//increase score
 				pool.remove(b);
-			//	maxBalls++;
+				//	maxBalls++;
 			}
-		
+
 		}
+		private boolean processFunArea(float x,float y){
+			
+			boolean retflag=false;
+			for(Ball b:functionBalls){
+		      if(b.radius>	Math.sqrt(	(x-b.x)*(x-b.x)+(y-b.y)*(y-b.y)))
+			  {
+				  int tc=b.color1;
+				  b.color1=b.color2;
+				  b.color2=tc;
+				  retflag=true;
+			  }
+			}
+			return retflag;
+		}
+		private boolean processMode2(float x,float y){
+
+			boolean retflag=false;
+			Ball selBall=null;
+			for(Ball b:functionBalls){
+				if(b.color1!=0)
+				{
+			      for(Ball sb:pool)
+				  {
+					if(  sb.isInBall(x,y))
+					{
+						selBall=sb;
+						break;
+					}
+				  }
+				  retflag=true;
+				}
+			}
+			if(selBall!=null)
+			{	
+			selBall.x=x;
+			selBall.y=y;
+			}
+			return retflag;
+		}
+
         @Override
         public boolean onTouchEvent(MotionEvent event)
         {
 			int touchcount= event.getPointerCount();
-			for(int i=0;i<touchcount;i++)
+			for (int i=0;i < touchcount;i++)
 			{
-			startremove = true;//false;
-            if (pool.size() > maxBallsswitch)
-            {
-              //  pool.remove(0);
-             //   score--;//score -1
-                colorId++;
-				startremove = true;
-				maxBallsswitch+=10;
-            }
-      
-			Ball ball=	 new Ball(event.getX(i), event.getY(i), 25 + Math.random() * 100);
-			if (colorId==0) {
-				starttime=new java.util.Date(System.currentTimeMillis());
-			}
-			int id=colorId;
-			int colorid1= id % colors.length;//(int) (Math.random() * colors.length); 
-			id++;
-		//	id++;
-			int colorid2= id % colors.length;//(int) (Math.random() * colors.length); 
-			colorId++;
-			/*
-			 while(colorid1==colorid2){
-			 colorid2=(int) (Math.random() * colors.length); 
-			 }
-			 */
-			ball.color1 = colorid1;
-			ball.color2 = colorid2;
+				//处理功能区
+				float x=event.getX(i);
+				float y=event.getY(i);
+				if(processFunArea(x,y))
+				{
+					return true;
+				}
+				//处理模式
+				if(processMode2(x,y))
+					return true;
+				startremove = true;//false;
+				if (pool.size() > maxBallsswitch)
+				{
+					//  pool.remove(0);
+					//   score--;//score -1
+					colorId++;
+					startremove = true;
+					maxBallsswitch += 10;
+				}
 
-            pool.add(ball);
-			//	if(pool.size()==maxBalls+1)
-          }
+				Ball ball=	 new Ball(event.getX(i), event.getY(i), 25 + Math.random() * 100);
+				if (colorId == 0)
+				{
+					starttime = new java.util.Date(System.currentTimeMillis());
+				}
+				int id=colorId;
+				int colorid1= id % colors.length;//(int) (Math.random() * colors.length); 
+				id++;
+				//	id++;
+				int colorid2= id % colors.length;//(int) (Math.random() * colors.length); 
+				colorId++;
+				/*
+				 while(colorid1==colorid2){
+				 colorid2=(int) (Math.random() * colors.length); 
+				 }
+				 */
+				ball.color1 = colorid1;
+				ball.color2 = colorid2;
+
+				pool.add(ball);
+				//	if(pool.size()==maxBalls+1)
+			}
 
             return true;
 
@@ -454,9 +528,9 @@ ballsarea+=getBallArea(b);
         public void onSensorChanged(SensorEvent event)
         {
             //record gravity
-			gx=event.values[0];
-			gy=event.values[1];
-			gz=event.values[2];
+			gx = event.values[0];
+			gy = event.values[1];
+			gz = event.values[2];
 			final float alpha = 0.2f;//0.5f;
 
 			gravity.x = alpha * gravity.x + (1 - alpha) * -event.values[0];
@@ -480,6 +554,9 @@ ballsarea+=getBallArea(b);
             {
                 super(x, y, radius);
             }
+			private boolean isInBall(float x,float y){
+				return radius>Math.sqrt((this.x-x)*(this.x-x)+(this.y-y)*(this.y-y));
+			}
         }
     }
 }
