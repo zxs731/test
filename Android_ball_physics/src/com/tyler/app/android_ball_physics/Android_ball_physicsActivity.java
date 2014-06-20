@@ -95,7 +95,8 @@ public class Android_ball_physicsActivity extends Activity
     public class BallPhysics extends View implements ITicker, SensorEventListener
     {
         private ArrayList<Ball> pool;
-        private int maxBalls = 40;
+        private int maxBalls = 400;
+		private int maxBallsswitch=40;
 		private boolean startremove=false;
 		ArrayList<Ball> needremove=new ArrayList<Ball>();
 
@@ -113,11 +114,13 @@ public class Android_ball_physicsActivity extends Activity
 		private float gx;
 		private float gy;
 		private float gz;
+		private int totalArea;
 
         public BallPhysics(Context context)
         {
             super(context);
             init(context);
+		
         }
 
         private void init(Context context)
@@ -141,7 +144,7 @@ public class Android_ball_physicsActivity extends Activity
             pool = new ArrayList<Ball>();
 		    needremove = new ArrayList<Ball>();	
 
-            Timer timer = new Timer(45, this);
+            Timer timer = new Timer(30, this);
             timer.start();
 
         }
@@ -154,16 +157,35 @@ public class Android_ball_physicsActivity extends Activity
             invalidate();
 
         }
+		private void drawvballs(Canvas canvas ){
+			//彩球顺序
+			for(int ii=0;ii<20;ii++)
+			{
+
+				int y=ii*20+40;
+				Ball nb=new Ball(20,y	,10);
+				rgbColor(colors[(colorId+1+ii)%colors.length]);
+                nb.draw(canvas, paint);
+				rgbColor(colors[(colorId+2+ii)%colors.length]);
+				canvas.drawCircle(nb.x, nb.y, (float)(nb.radius * Constants.oneByGoldenRatio), paint);
+
+            }
+		}
+		private int getBallArea(Ball ball)
+		{
+		return (int)(ball.radius*ball.radius*3.14159);
+		}
 
         @Override
         protected void onDraw(Canvas canvas)
         {
 
 			//  int id = colorId;
-        	
+        	int ballsarea=0;
+			totalArea= getHeight()*getWidth();
             for (Ball b : pool)
             {
-
+ballsarea+=getBallArea(b);
 				rgbColor(colors[b.color1]);
 			/*	RadialGradient  mRadialGradient = new RadialGradient(b.x, b.y, b.radius+2, new int[] {  
 						paint.getColor(),paint.getColor(),paint.getColor(),paint.getColor(),paint.getColor(),paint.getColor() , paint.getColor() ,paint.getColor() ,Color.BLACK}, null,  
@@ -210,7 +232,8 @@ public class Android_ball_physicsActivity extends Activity
 					.replace("{1}", score+"")
 					.replace("{2}", startremove+"")
 					.replace("{3}",pool.size()+"")
-					.replace("{4}",maxBalls+"");
+				//	.replace("{4}",maxBallsswitch+"");
+					.replace("{4}",ballsarea*100/totalArea+"%");
 			//paint.setTextAlign(Align.CENTER);
 			paint.setTextSize(18); 
 			paint.setColor(Color.WHITE);
@@ -220,13 +243,15 @@ public class Android_ball_physicsActivity extends Activity
 			{
 				
 			int x=ii*20+40;
-			Ball nb=new Ball(x,45,10);
+			Ball nb=new Ball(x,40,10);
 				rgbColor(colors[(colorId+1+ii)%colors.length]);
                 nb.draw(canvas, paint);
 				rgbColor(colors[(colorId+2+ii)%colors.length]);
 				canvas.drawCircle(nb.x, nb.y, (float)(nb.radius * Constants.oneByGoldenRatio), paint);
 		
             }
+			//垂直顺序
+			drawvballs(canvas);
 			}
 			//draw comments x;y
 			/*
@@ -365,7 +390,7 @@ public class Android_ball_physicsActivity extends Activity
 			{
 				score++;//increase score
 				pool.remove(b);
-				maxBalls++;
+			//	maxBalls++;
 			}
 		
 		}
@@ -375,14 +400,14 @@ public class Android_ball_physicsActivity extends Activity
 			int touchcount= event.getPointerCount();
 			for(int i=0;i<touchcount;i++)
 			{
-			startremove = false;
-            if (pool.size() > maxBalls)
+			startremove = true;//false;
+            if (pool.size() > maxBallsswitch)
             {
-                pool.remove(0);
-                score--;//score -1
+              //  pool.remove(0);
+             //   score--;//score -1
                 colorId++;
 				startremove = true;
-				maxBalls=40;
+				maxBallsswitch+=10;
             }
       
 			Ball ball=	 new Ball(event.getX(i), event.getY(i), 25 + Math.random() * 100);
@@ -432,7 +457,7 @@ public class Android_ball_physicsActivity extends Activity
 			gx=event.values[0];
 			gy=event.values[1];
 			gz=event.values[2];
-			final float alpha = 0.5f;
+			final float alpha = 0.2f;//0.5f;
 
 			gravity.x = alpha * gravity.x + (1 - alpha) * -event.values[0];
 			gravity.y = alpha * gravity.y + (1 - alpha) * event.values[1];
