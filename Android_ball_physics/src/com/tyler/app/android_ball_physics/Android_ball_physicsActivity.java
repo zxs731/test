@@ -115,7 +115,7 @@ public class Android_ball_physicsActivity extends Activity
 		private float gy;
 		private float gz;
 		private int totalArea;
-		private ArrayList<Ball> functionBalls;
+		private ArrayList<ClickBall> functionBalls;
 		
 
         public BallPhysics(Context context)
@@ -153,21 +153,30 @@ public class Android_ball_physicsActivity extends Activity
         }
 
 		private void initalFuncBalls(){
-			functionBalls =new ArrayList<Ball>();
-			Ball clickBall=new Ball(55,70,35);
-			clickBall.color1=(colorId ) % colors.length;
-			clickBall.color2=(colorId + 1 ) % colors.length;
+			functionBalls =new ArrayList<ClickBall>();
+			ClickBall clickBall=new Button1(125,90,35);
+			clickBall.color1=Color.GRAY;//(colorId ) % colors.length;
+			clickBall.color2=Color.LTGRAY;//(colorId + 1 ) % colors.length;
+			clickBall.setBallsPool(pool);
 			functionBalls.add(clickBall);
 		}
 		private void drawFuncBalls(Canvas canvas)
 		{
 			//彩球顺序
-			for (Ball b:functionBalls){
-				rgbColor(colors[b.color1]);
+			for (ClickBall b:functionBalls){
+				//rgbColor(colors[b.color1]);
+				paint.setColor(b.color1);
                 b.draw(canvas, paint);
-				rgbColor(colors[b.color2]);
+				paint.setColor(b.color2);
 				canvas.drawCircle(b.x, b.y, (float)(b.radius * Constants.oneByGoldenRatio), paint);
-
+				paint.setColor(Color.WHITE);
+				paint.setTextSize(18); 
+				canvas.drawText("Mode2",b.x-95,b.y,paint);
+				if(b.isOn)
+					canvas.drawText("On",b.x,b.y,paint);
+				else
+					canvas.drawText("Off",b.x,b.y,paint);
+				
             }
 		}
         @Override
@@ -420,12 +429,10 @@ public class Android_ball_physicsActivity extends Activity
 		private boolean processFunArea(float x,float y){
 			
 			boolean retflag=false;
-			for(Ball b:functionBalls){
+			for(ClickBall b:functionBalls){
 		      if(b.radius>	Math.sqrt(	(x-b.x)*(x-b.x)+(y-b.y)*(y-b.y)))
 			  {
-				  int tc=b.color1;
-				  b.color1=b.color2;
-				  b.color2=tc;
+				  b.Click();
 				  retflag=true;
 			  }
 			}
@@ -434,26 +441,15 @@ public class Android_ball_physicsActivity extends Activity
 		private boolean processMode2(float x,float y){
 
 			boolean retflag=false;
-			Ball selBall=null;
-			for(Ball b:functionBalls){
-				if(b.color1!=0)
+			
+			for(ClickBall b:functionBalls){
+				if(b.isOn)
 				{
-			      for(Ball sb:pool)
-				  {
-					if(  sb.isInBall(x,y))
-					{
-						selBall=sb;
-						break;
-					}
-				  }
-				  retflag=true;
+					b.perform(x,y);
+				  	retflag=true;
 				}
 			}
-			if(selBall!=null)
-			{	
-			selBall.x=x;
-			selBall.y=y;
-			}
+			
 			return retflag;
 		}
 
@@ -558,5 +554,53 @@ public class Android_ball_physicsActivity extends Activity
 				return radius>Math.sqrt((this.x-x)*(this.x-x)+(this.y-y)*(this.y-y));
 			}
         }
+		private abstract class ClickBall extends Ball implements IPerform{
+			protected boolean isOn;
+			protected ArrayList<Ball> _pool=null;
+			public ClickBall(double x, double y,double radius)
+			{
+				super(x,y,radius);
+				isOn=false;
+			}
+			public abstract void perform(float eventx,float eventy);
+			public void setBallsPool(ArrayList<Ball> pool){
+				_pool=pool;
+			}
+			public void Click()
+			{
+				isOn=!isOn;
+				int tc=color1;
+				color1=color2;
+				color2=tc;
+			}
+		}
+		private class Button1 extends ClickBall{
+			public Button1(double x,double y,int radius){
+				super(x,y,radius);
+			}
+			public void perform(float eventx,float eventy){
+				if(isOn && _pool!=null)
+				{
+					Ball selBall=null;
+					for(Ball b:_pool)
+					{
+						if(b.isInBall(eventx,eventy))
+						{
+							selBall=b;
+							break;
+						}
+					}
+					if(selBall!=null)
+					{
+						selBall.x=eventx;
+						selBall.y=eventy;
+					}
+				}
+			}
+		}
+		
     }
+	interface IPerform{
+		void perform(float eventx,float eventy);
+	}
 }
