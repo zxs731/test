@@ -441,7 +441,7 @@ public class Android_ball_physicsActivity extends Activity
 						public void run()
 						{
 							if (vibrator != null)
-								vibrator.vibrate(100);
+								vibrator.vibrate(40);
 						}
 					}).start();
 			}
