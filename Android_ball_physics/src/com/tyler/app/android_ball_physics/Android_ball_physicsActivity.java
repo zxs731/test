@@ -34,6 +34,7 @@ import biga.shapes2D.Circle;
 import biga.utils.Constants;
 import biga.utils.GeomUtils;
 import java.util.*;
+import android.os.Vibrator;  
 
 
 
@@ -45,6 +46,8 @@ public class Android_ball_physicsActivity extends Activity
 	Date starttime;
 	int score;
 	String statusmsg="";
+	Vibrator vibrator=null ;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -75,6 +78,7 @@ public class Android_ball_physicsActivity extends Activity
 				{
 					// TODO Auto-generated method stub
 					AppHelper.enableSensor(mainActivity, physics, SensorType.ACCELEROMETER, SensorRate.GAME);
+					vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);  
 				}
 
 
@@ -116,7 +120,7 @@ public class Android_ball_physicsActivity extends Activity
 		private float gz;
 		private int totalArea;
 		private ArrayList<ClickBall> functionBalls;
-		
+
 
         public BallPhysics(Context context)
         {
@@ -152,18 +156,20 @@ public class Android_ball_physicsActivity extends Activity
 
         }
 
-		private void initalFuncBalls(){
-			functionBalls =new ArrayList<ClickBall>();
-			ClickBall clickBall=new Button1(125,90,35);
-			clickBall.color1=Color.GRAY;//(colorId ) % colors.length;
-			clickBall.color2=Color.LTGRAY;//(colorId + 1 ) % colors.length;
+		private void initalFuncBalls()
+		{
+			functionBalls = new ArrayList<ClickBall>();
+			ClickBall clickBall=new Button1(125, 90, 35);
+			clickBall.color1 = Color.GRAY;//(colorId ) % colors.length;
+			clickBall.color2 = Color.LTGRAY;//(colorId + 1 ) % colors.length;
 			clickBall.setBallsPool(pool);
 			functionBalls.add(clickBall);
 		}
 		private void drawFuncBalls(Canvas canvas)
 		{
 			//彩球顺序
-			for (ClickBall b:functionBalls){
+			for (ClickBall b:functionBalls)
+			{
 				//rgbColor(colors[b.color1]);
 				paint.setColor(b.color1);
                 b.draw(canvas, paint);
@@ -171,12 +177,12 @@ public class Android_ball_physicsActivity extends Activity
 				canvas.drawCircle(b.x, b.y, (float)(b.radius * Constants.oneByGoldenRatio), paint);
 				paint.setColor(Color.WHITE);
 				paint.setTextSize(18); 
-				canvas.drawText("Mode2",b.x-95,b.y,paint);
-				if(b.isOn)
-					canvas.drawText("On",b.x,b.y,paint);
+				canvas.drawText("Mode2", b.x - 95, b.y, paint);
+				if (b.isOn)
+					canvas.drawText("On", b.x, b.y, paint);
 				else
-					canvas.drawText("Off",b.x,b.y,paint);
-				
+					canvas.drawText("Off", b.x, b.y, paint);
+
             }
 		}
         @Override
@@ -392,6 +398,8 @@ public class Android_ball_physicsActivity extends Activity
 								{
 									needremove.add(b);
 									needremove.add(a);
+									if (vibrator != null)
+										vibrator.vibrate(50);
 									break;
 								}
 							}
@@ -422,34 +430,50 @@ public class Android_ball_physicsActivity extends Activity
 			{
 				score++;//increase score
 				pool.remove(b);
+
 				//	maxBalls++;
 			}
-
+			if (balls.size() > 0)
+			{
+				//new thread
+				new Thread(new Runnable(){
+						@Override
+						public void run()
+						{
+							if (vibrator != null)
+								vibrator.vibrate(100);
+						}
+					}).start();
+			}
 		}
-		private boolean processFunArea(float x,float y){
-			
+		private boolean processFunArea(float x, float y)
+		{
+
 			boolean retflag=false;
-			for(ClickBall b:functionBalls){
-		      if(b.radius>	Math.sqrt(	(x-b.x)*(x-b.x)+(y-b.y)*(y-b.y)))
-			  {
-				  b.Click();
-				  retflag=true;
-			  }
+			for (ClickBall b:functionBalls)
+			{
+				if (b.radius >	Math.sqrt((x - b.x) * (x - b.x) + (y - b.y) * (y - b.y)))
+				{
+					b.Click();
+					retflag = true;
+				}
 			}
 			return retflag;
 		}
-		private boolean processMode2(float x,float y){
+		private boolean processMode2(float x, float y)
+		{
 
 			boolean retflag=false;
-			
-			for(ClickBall b:functionBalls){
-				if(b.isOn)
+
+			for (ClickBall b:functionBalls)
+			{
+				if (b.isOn)
 				{
-					b.perform(x,y);
-				  	retflag=true;
+					b.perform(x, y);
+				  	retflag = true;
 				}
 			}
-			
+
 			return retflag;
 		}
 
@@ -462,12 +486,12 @@ public class Android_ball_physicsActivity extends Activity
 				//处理功能区
 				float x=event.getX(i);
 				float y=event.getY(i);
-				if(processFunArea(x,y))
+				if (processFunArea(x, y))
 				{
 					return true;
 				}
 				//处理模式
-				if(processMode2(x,y))
+				if (processMode2(x, y))
 					return true;
 				startremove = true;//false;
 				if (pool.size() > maxBallsswitch)
@@ -550,57 +574,64 @@ public class Android_ball_physicsActivity extends Activity
             {
                 super(x, y, radius);
             }
-			private boolean isInBall(float x,float y){
-				return radius>Math.sqrt((this.x-x)*(this.x-x)+(this.y-y)*(this.y-y));
+			private boolean isInBall(float x, float y)
+			{
+				return radius > Math.sqrt((this.x - x) * (this.x - x) + (this.y - y) * (this.y - y));
 			}
         }
-		private abstract class ClickBall extends Ball implements IPerform{
+		private abstract class ClickBall extends Ball implements IPerform
+		{
 			protected boolean isOn;
 			protected ArrayList<Ball> _pool=null;
-			public ClickBall(double x, double y,double radius)
+			public ClickBall(double x, double y, double radius)
 			{
-				super(x,y,radius);
-				isOn=false;
+				super(x, y, radius);
+				isOn = false;
 			}
-			public abstract void perform(float eventx,float eventy);
-			public void setBallsPool(ArrayList<Ball> pool){
-				_pool=pool;
+			public abstract void perform(float eventx, float eventy);
+			public void setBallsPool(ArrayList<Ball> pool)
+			{
+				_pool = pool;
 			}
 			public void Click()
 			{
-				isOn=!isOn;
+				isOn = !isOn;
 				int tc=color1;
-				color1=color2;
-				color2=tc;
+				color1 = color2;
+				color2 = tc;
 			}
 		}
-		private class Button1 extends ClickBall{
-			public Button1(double x,double y,int radius){
-				super(x,y,radius);
+		private class Button1 extends ClickBall
+		{
+			public Button1(double x, double y, int radius)
+			{
+				super(x, y, radius);
 			}
-			public void perform(float eventx,float eventy){
-				if(isOn && _pool!=null)
+			public void perform(float eventx, float eventy)
+			{
+				if (isOn && _pool != null)
 				{
 					Ball selBall=null;
-					for(Ball b:_pool)
+					for (Ball b:_pool)
 					{
-						if(b.isInBall(eventx,eventy))
+						if (b.isInBall(eventx, eventy))
 						{
-							selBall=b;
+							selBall = b;
 							break;
 						}
 					}
-					if(selBall!=null)
+					if (selBall != null)
 					{
-						selBall.x=eventx;
-						selBall.y=eventy;
+						selBall.x = eventx;
+						selBall.y = eventy;
 					}
 				}
 			}
 		}
-		
+
     }
-	interface IPerform{
-		void perform(float eventx,float eventy);
+	interface IPerform
+	{
+		void perform(float eventx, float eventy);
 	}
 }

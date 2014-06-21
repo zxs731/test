@@ -7,7 +7,7 @@
     <uses-sdk
         android:minSdkVersion="7"
         android:targetSdkVersion="7" />
- 
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
@@ -17,7 +17,7 @@
             android:name="com.tyler.app.android_ball_physics.Android_ball_physicsActivity"
             android:label="@string/app_name" 
             android:theme="@android:style/Theme"
-             >
+		>
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -25,5 +25,6 @@
             </intent-filter>
         </activity>
     </application>
-<uses-permission android:name="android.permission.WAKE_LOCK"></uses-permission>
+	<uses-permission android:name="android.permission.WAKE_LOCK"></uses-permission>
+	<uses-permission android:name="android.permission.VIBRATE"/>
 </manifest>
