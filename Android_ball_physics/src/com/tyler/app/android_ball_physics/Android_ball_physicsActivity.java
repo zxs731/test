@@ -349,7 +349,7 @@ public class Android_ball_physicsActivity extends Activity
             for (Ball a : pool)
             {
 
-                if (a.dragging) continue;
+       //         if (a.dragging) continue;
 				issame = false;
 
                 // friction
@@ -398,8 +398,8 @@ public class Android_ball_physicsActivity extends Activity
 								{
 									needremove.add(b);
 									needremove.add(a);
-									if (vibrator != null)
-										vibrator.vibrate(50);
+								//	if (vibrator != null)
+								//		vibrator.vibrate(50);
 									break;
 								}
 							}
@@ -622,6 +622,8 @@ public class Android_ball_physicsActivity extends Activity
 					}
 					if (selBall != null)
 					{
+						selBall.vx+=( eventx-selBall.x)*1;
+						selBall.vy+=(eventy-selBall.y)*1;
 						selBall.x = eventx;
 						selBall.y = eventy;
 					}
