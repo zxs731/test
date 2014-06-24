@@ -36,6 +36,7 @@ import biga.utils.GeomUtils;
 import java.util.*;
 import android.os.Vibrator;  
 import android.util.DisplayMetrics;
+import java.math.*;
 
 
 
@@ -163,6 +164,7 @@ public class MainActivity extends Activity
 			enemyPool=new ArrayList<Ball>();
 		//    initalFuncBalls();
 		InitialMyPlane();
+		initialEnemy();
 
             Timer timer = new Timer(30, this);
             timer.start();
@@ -177,7 +179,17 @@ public class MainActivity extends Activity
 					myPlane.color2=1;
 			//pool.add(myPlane);
 		}
-		
+		private void initialEnemy(){
+			for(int i=0;i<10;i++){
+				Ball eb=new Ball(Math.random()*UtilityHelper.SCREEN_WIDTH
+				,0,8);
+				eb.color1=3;
+				eb.color2=4;
+				eb.vy=Math.random()*10;
+				eb.vx=0;
+				enemyPool.add(eb);
+			}
+		}
 
 		private void initalFuncBalls()
 		{
@@ -374,10 +386,29 @@ public class MainActivity extends Activity
 		 //    	needremove.clear();
 		 myPlaneUpdate();
 		 myBulletUpdate();
+		 enemyUpdate();
+		}
+		private void enemyUpdate(){
+			for(Ball a:enemyPool)
+			{
+				//bounds check
+				if( a.y>getHeight() )
+				{
+					a.y=0;
+					a.x=(float)Math.random()*UtilityHelper.SCREEN_WIDTH;
+					
+					continue;
+				}	
+				//敌人移动
+				a.x+=a.vx;
+				a.y+=a.vy;
+				
+			}
 		}
 		private void myBulletUpdate()
 		{
 			ArrayList<Ball> needRemoveBalls=new ArrayList<Ball>();
+			ArrayList<Ball> needRemoveEnemy=new ArrayList<Ball>();
 			for(Ball a:myBulletPool)
 			{
 				//bounds check
@@ -386,6 +417,25 @@ public class MainActivity extends Activity
 					needRemoveBalls.add(a);
 					continue;
 				}	
+				//击中
+				boolean hit=false;
+				for(Ball eb:enemyPool){
+			if(	Math.sqrt(	(eb.x-a.x)*(eb.x-a.x)+(eb.y-a.y)*(eb.y-a.y))<=a.radius+eb.radius)
+			{
+				hit=true;
+				needRemoveBalls.add(a);
+			//	needRemoveEnemy.add(eb);
+			    eb.y=0;
+				eb.x=(float)Math.random()*UtilityHelper.SCREEN_WIDTH;
+				
+				continue;
+			}
+	
+				}
+				if(hit)
+				{
+					continue;
+				}
 				a.x+=a.vx;
 				a.y-=a.vy;
 			}
@@ -393,6 +443,12 @@ public class MainActivity extends Activity
 			{
 				myBulletPool.remove(b);
 			}
+			/*
+			for(Ball b:needRemoveEnemy)
+			{
+				enemyPool.remove(b);
+			}
+			*/
 		}
 		private void myPlaneUpdate()
 		{
