@@ -67,7 +67,7 @@ public class MainActivity extends Activity
 		getWindowManager().getDefaultDisplay().getMetrics(dm);
 		UtilityHelper.SCREEN_HEIGHT = dm.heightPixels; // 获取具体的屏幕分辨率数??
 		UtilityHelper.SCREEN_WIDTH = dm.widthPixels;
-		
+
 
         setContentView(R.layout.activity_android_ball_physics);
 
@@ -130,6 +130,8 @@ public class MainActivity extends Activity
 		private float gz;
 		private int totalArea;
 		private ArrayList<ClickBall> functionBalls;
+		private int life=100;
+		private int tscore=0;
 
 
         public BallPhysics(Context context)
@@ -159,12 +161,12 @@ public class MainActivity extends Activity
 				R.string.timekeeping);
             pool = new ArrayList<Ball>();
 		    needremove = new ArrayList<Ball>();
-			myBulletPool=new ArrayList<Ball>();
-			eBulletPool=new ArrayList<Ball>();
-			enemyPool=new ArrayList<Ball>();
-		//    initalFuncBalls();
-		InitialMyPlane();
-		initialEnemy();
+			myBulletPool = new ArrayList<Ball>();
+			eBulletPool = new ArrayList<Ball>();
+			enemyPool = new ArrayList<Ball>();
+			//    initalFuncBalls();
+			InitialMyPlane();
+			initialEnemy();
 
             Timer timer = new Timer(30, this);
             timer.start();
@@ -172,21 +174,23 @@ public class MainActivity extends Activity
         }
 		private void InitialMyPlane()
 		{
-			myPlane=new MyPlane(UtilityHelper.SCREEN_WIDTH/2
-					,UtilityHelper.SCREEN_HEIGHT*3/4
-					,40);
-					myPlane.color1=0;
-					myPlane.color2=1;
+			myPlane = new MyPlane(UtilityHelper.SCREEN_WIDTH / 2
+								  , UtilityHelper.SCREEN_HEIGHT * 3 / 4
+								  , 40);
+			myPlane.color1 = 0;
+			myPlane.color2 = 1;
 			//pool.add(myPlane);
 		}
-		private void initialEnemy(){
-			for(int i=0;i<10;i++){
-				Ball eb=new Ball(Math.random()*UtilityHelper.SCREEN_WIDTH
-				,0,8);
-				eb.color1=3;
-				eb.color2=4;
-				eb.vy=Math.random()*10;
-				eb.vx=0;
+		private void initialEnemy()
+		{
+			for (int i=0;i < 10;i++)
+			{
+				Ball eb=new Ball(Math.random() * UtilityHelper.SCREEN_WIDTH
+								 , 0, 15+Math.random()*20);
+				eb.color1 = 3;
+				eb.color2 = 4;
+				eb.vy = Math.random() * 10;
+				eb.vx = 0;
 				enemyPool.add(eb);
 			}
 		}
@@ -247,87 +251,98 @@ public class MainActivity extends Activity
 		{
 			return (int)(ball.radius * ball.radius * 3.14159);
 		}
-		private void DrawBall(Ball myPlane,Canvas canvas){
+		private void DrawBall(Ball myPlane, Canvas canvas)
+		{
 			rgbColor(colors[myPlane.color1]);
-			myPlane.draw(canvas,paint);
+			myPlane.draw(canvas, paint);
 			rgbColor(colors[myPlane.color2]);
 			canvas.drawCircle(myPlane.x, myPlane.y, (float)(myPlane.radius * Constants.oneByGoldenRatio), paint);
 		}
         @Override
         protected void onDraw(Canvas canvas)
         {
-			for(Ball b:enemyPool)
+			for (Ball b:enemyPool)
 			{
-				DrawBall(b,canvas);
+				DrawBall(b, canvas);
 			}
-			for(Ball bu:myBulletPool)
+			for(Ball eb:eBulletPool)
 			{
-				DrawBall(bu,canvas);
+				DrawBall(eb,canvas);
 			}
-			DrawBall(myPlane,canvas);
-			
-			/*
-			//  int id = colorId;
-        	int ballsarea=0;
-			totalArea = getHeight() * getWidth();
-            for (Ball b : pool)
-            {
-				ballsarea += getBallArea(b);
-				rgbColor(colors[b.color1]);
-				
-                b.draw(canvas, paint);
-                paint.setShader(null);
-
-                //change to circle color
-				rgbColor(colors[b.color2]);
-
-				float bcx=b.x;
-				float bcy=b.y;
-				//draw circle
-                canvas.drawCircle(b.x, b.y, (float)(b.radius * Constants.oneByGoldenRatio), paint);
-				
-				//canvas.drawRect(new RectF(b.x-c, b.y-c, b.x+c, b.y+(b.radius-c)), paint);
-                paint.setShader(null);
-                //draw circle end
-				paint.setColor(Color.BLACK);
-				//canvas.drawText(b.color1+","+b.color2, b.x, b.y, paint);
-            }
-			*/
-			/*
-            if (colorId > 0)
-            {
-				//draw score
-				java.util.Date now = new java.util.Date(System.currentTimeMillis());
-				float timeUsing = ((float) (now.getTime() - starttime
-					.getTime()) / 1000);
-				timeUsing = (float) (Math.round(timeUsing * 10)) / 10;
-				String msg = statusmsg. replace("{0}",
-												timeUsing + "")
-					.replace("{1}", score + "")
-					.replace("{2}", startremove + "")
-					.replace("{3}", pool.size() + "")
-					//	.replace("{4}",maxBallsswitch+"");
-					.replace("{4}", ballsarea * 100 / totalArea + "%");
-				//paint.setTextAlign(Align.CENTER);
-				paint.setTextSize(18); 
-				paint.setColor(Color.WHITE);
-				canvas.drawText(msg, 35, 15, paint);
-				//彩球顺序
-				for (int ii=0;ii < 20;ii++)
-				{
-
-					int x=ii * 20 + 40;
-					Ball nb=new Ball(x, 40, 10);
-					rgbColor(colors[(colorId + 1 + ii) % colors.length]);
-					nb.draw(canvas, paint);
-					rgbColor(colors[(colorId + 2 + ii) % colors.length]);
-					canvas.drawCircle(nb.x, nb.y, (float)(nb.radius * Constants.oneByGoldenRatio), paint);
-
-				}
-				//垂直顺序
-				drawvballs(canvas);
+			for (Ball bu:myBulletPool)
+			{
+				DrawBall(bu, canvas);
 			}
-			*/
+			DrawBall(myPlane, canvas);
+			String gmsg="Life={1}, Score={2}";
+			gmsg=gmsg.replace("{1}",""+life)
+				.replace("{2}",""+tscore);
+			paint.setColor(Color.WHITE);
+			paint.setTextSize(20); 
+			canvas.drawText(gmsg, 5, 25, paint);	
+
+			/*
+			 //  int id = colorId;
+			 int ballsarea=0;
+			 totalArea = getHeight() * getWidth();
+			 for (Ball b : pool)
+			 {
+			 ballsarea += getBallArea(b);
+			 rgbColor(colors[b.color1]);
+
+			 b.draw(canvas, paint);
+			 paint.setShader(null);
+
+			 //change to circle color
+			 rgbColor(colors[b.color2]);
+
+			 float bcx=b.x;
+			 float bcy=b.y;
+			 //draw circle
+			 canvas.drawCircle(b.x, b.y, (float)(b.radius * Constants.oneByGoldenRatio), paint);
+
+			 //canvas.drawRect(new RectF(b.x-c, b.y-c, b.x+c, b.y+(b.radius-c)), paint);
+			 paint.setShader(null);
+			 //draw circle end
+			 paint.setColor(Color.BLACK);
+			 //canvas.drawText(b.color1+","+b.color2, b.x, b.y, paint);
+			 }
+			 */
+			/*
+			 if (colorId > 0)
+			 {
+			 //draw score
+			 java.util.Date now = new java.util.Date(System.currentTimeMillis());
+			 float timeUsing = ((float) (now.getTime() - starttime
+			 .getTime()) / 1000);
+			 timeUsing = (float) (Math.round(timeUsing * 10)) / 10;
+			 String msg = statusmsg. replace("{0}",
+			 timeUsing + "")
+			 .replace("{1}", score + "")
+			 .replace("{2}", startremove + "")
+			 .replace("{3}", pool.size() + "")
+			 //	.replace("{4}",maxBallsswitch+"");
+			 .replace("{4}", ballsarea * 100 / totalArea + "%");
+			 //paint.setTextAlign(Align.CENTER);
+			 paint.setTextSize(18); 
+			 paint.setColor(Color.WHITE);
+			 canvas.drawText(msg, 35, 15, paint);
+			 //彩球顺序
+			 for (int ii=0;ii < 20;ii++)
+			 {
+
+			 int x=ii * 20 + 40;
+			 Ball nb=new Ball(x, 40, 10);
+			 rgbColor(colors[(colorId + 1 + ii) % colors.length]);
+			 nb.draw(canvas, paint);
+			 rgbColor(colors[(colorId + 2 + ii) % colors.length]);
+			 canvas.drawCircle(nb.x, nb.y, (float)(nb.radius * Constants.oneByGoldenRatio), paint);
+
+			 }
+			 //垂直顺序
+			 drawvballs(canvas);
+			 }
+			 */
 			//draw comments x;y
 			/*
 			 for(Ball b:pool)
@@ -350,175 +365,254 @@ public class MainActivity extends Activity
 			 paint.setTextSize(20); 
 			 canvas.drawText(gmsg, 5, 45, paint);
 			 */
-			 /*
-			biga.Point p0=new biga.Point();
-			p0.x = 200;
-			p0.y = 350;
-			biga.Point py=new biga.Point();
-			biga.Point px=new biga.Point();
-			biga.Point pz=new biga.Point();
-			py.x = p0.x;
-			py.y = p0.y + gy * 10 * (-1);
-			px.x = p0.x + gx * 10;
-			px.y = p0.y;
-			float part=(float)(gz * 10 / Math.sqrt(2));
-			pz.x = p0.x + part * (-1);
-			pz.y = p0.y + part;
-			paint.setStrokeWidth(5);
-			canvas.drawLine(p0.x, p0.y, py.x, py.y, paint);
-			canvas.drawLine(p0.x, p0.y, px.x, px.y, paint);
-			canvas.drawLine(p0.x, p0.y, pz.x, pz.y, paint);
-			paint.setStrokeWidth(0);
-			canvas.drawText("y: " + gy + " (m/s2)", py.x + 20, py.y, paint);
-			canvas.drawText("x: " + gx + " (m/s2)", px.x, px.y - 20, paint);
-			canvas.drawText("z: " + gz + " (m/s2)", pz.x + 20, pz.y + 20, paint);
+			/*
+			 biga.Point p0=new biga.Point();
+			 p0.x = 200;
+			 p0.y = 350;
+			 biga.Point py=new biga.Point();
+			 biga.Point px=new biga.Point();
+			 biga.Point pz=new biga.Point();
+			 py.x = p0.x;
+			 py.y = p0.y + gy * 10 * (-1);
+			 px.x = p0.x + gx * 10;
+			 px.y = p0.y;
+			 float part=(float)(gz * 10 / Math.sqrt(2));
+			 pz.x = p0.x + part * (-1);
+			 pz.y = p0.y + part;
+			 paint.setStrokeWidth(5);
+			 canvas.drawLine(p0.x, p0.y, py.x, py.y, paint);
+			 canvas.drawLine(p0.x, p0.y, px.x, px.y, paint);
+			 canvas.drawLine(p0.x, p0.y, pz.x, pz.y, paint);
+			 paint.setStrokeWidth(0);
+			 canvas.drawText("y: " + gy + " (m/s2)", py.x + 20, py.y, paint);
+			 canvas.drawText("x: " + gx + " (m/s2)", px.x, px.y - 20, paint);
+			 canvas.drawText("z: " + gz + " (m/s2)", pz.x + 20, pz.y + 20, paint);
 
-			drawFuncBalls(canvas);
-			*/
+			 drawFuncBalls(canvas);
+			 */
 		}
 
 
 
         private void update()
         {
-		//	boolean issame;
-		//	if (startremove)
-		 //    	needremove.clear();
-		 myPlaneUpdate();
-		 myBulletUpdate();
-		 enemyUpdate();
+			//	boolean issame;
+			//	if (startremove)
+			//    	needremove.clear();
+			myPlaneUpdate();
+			myBulletUpdate();
+			enemyUpdate();
+			eBulletUpdate();
 		}
-		private void enemyUpdate(){
-			for(Ball a:enemyPool)
-			{
-				//bounds check
-				if( a.y>getHeight() )
-				{
-					a.y=0;
-					a.x=(float)Math.random()*UtilityHelper.SCREEN_WIDTH;
-					
+		private void eBulletUpdate(){
+			boolean isHit=false;
+			
+			ArrayList<Ball> clear=new ArrayList<Ball>();	
+			for (Ball a:eBulletPool){
+				if(a.y>UtilityHelper.SCREEN_HEIGHT
+				||a.x<0||a.x>UtilityHelper.SCREEN_WIDTH
+				||a.y<0){
+					clear.add(a);
 					continue;
-				}	
-				//敌人移动
+				}
+				if(coarseCollision(a,myPlane))
+				{
+					isHit=true;
+					life-=1;
+					clear.add(a);
+					continue;
+				}
 				a.x+=a.vx;
 				a.y+=a.vy;
+			}
+			if(clear.size()>0)
+			{
+				clear(eBulletPool,clear);
+			}
+			if(isHit)
+				vibrate();
+		}
+		private void enemyUpdate()
+		{
+			ArrayList<Ball> clear=new ArrayList<Ball>();
+
+			for (Ball a:enemyPool)
+			{
+				//bounds check
+				if (a.y > getHeight())
+				{
+					a.y = 0;
+					a.x = (float)Math.random() * UtilityHelper.SCREEN_WIDTH;
+
+					continue;
+				}	
+				//撞毁
+				if (coarseCollision(a, myPlane))
+				{
+					clear.add(a);
+					life-=5;
+					continue;
+				}
+				//敌人移动
+				a.x += a.vx;
+				a.y += a.vy;
+				//发射
+				if(Math.random()*100>97)
+				{
+					Ball ebu=new Ball(a.x,a.y,8);
+					ebu.color1=5;
+					ebu.color2=6;
+			        if(myPlane.y<a.y)
+					    ebu.vy=(-1)*(a.vy+20);
+					else
+						ebu.vy=a.vy+20;
+					ebu.vx=	(myPlane.x-ebu.x)/( (myPlane.y-ebu.y)/ebu.vy);
+					eBulletPool.add(ebu);
+				}
 				
+
+			}
+			if (clear.size() > 0)
+			{
+				clear(enemyPool, clear);
+				//震动
+				vibrate();
+			}
+		}
+		private void vibrate()
+		{
+			//new thread
+			new Thread(new Runnable(){
+					@Override
+					public void run()
+					{
+						if (vibrator != null)
+							vibrator.vibrate(100);
+					}
+				}).start();
+		}
+		private void clear(ArrayList<Ball> container, ArrayList<Ball> clear)
+		{
+			for (Ball b:clear)
+			{
+				container.remove(b);
 			}
 		}
 		private void myBulletUpdate()
 		{
 			ArrayList<Ball> needRemoveBalls=new ArrayList<Ball>();
 			ArrayList<Ball> needRemoveEnemy=new ArrayList<Ball>();
-			for(Ball a:myBulletPool)
+			for (Ball a:myBulletPool)
 			{
 				//bounds check
-				if(a.x>getWidth() || a.y>getHeight() || a.x<0 || a.y<0)
+				if (a.x > getWidth() || a.y > getHeight() || a.x < 0 || a.y < 0)
 				{
 					needRemoveBalls.add(a);
 					continue;
 				}	
 				//击中
 				boolean hit=false;
-				for(Ball eb:enemyPool){
-			if(	Math.sqrt(	(eb.x-a.x)*(eb.x-a.x)+(eb.y-a.y)*(eb.y-a.y))<=a.radius+eb.radius)
-			{
-				hit=true;
-				needRemoveBalls.add(a);
-			//	needRemoveEnemy.add(eb);
-			    eb.y=0;
-				eb.x=(float)Math.random()*UtilityHelper.SCREEN_WIDTH;
-				
-				continue;
-			}
-	
+				for (Ball eb:enemyPool)
+				{
+					if (Math.sqrt((eb.x - a.x) * (eb.x - a.x) + (eb.y - a.y) * (eb.y - a.y)) <= a.radius + eb.radius)
+					{
+						hit = true;
+						needRemoveBalls.add(a);
+						//	needRemoveEnemy.add(eb);
+						eb.y = 0;
+						eb.x = (float)Math.random() * UtilityHelper.SCREEN_WIDTH;
+                        tscore+=5;
+						continue;
+					}
+
 				}
-				if(hit)
+				if (hit)
 				{
 					continue;
 				}
-				a.x+=a.vx;
-				a.y-=a.vy;
+				a.x += a.vx;
+				a.y -= a.vy;
 			}
-			for(Ball b:needRemoveBalls)
+			for (Ball b:needRemoveBalls)
 			{
 				myBulletPool.remove(b);
 			}
 			/*
-			for(Ball b:needRemoveEnemy)
-			{
-				enemyPool.remove(b);
-			}
-			*/
+			 for(Ball b:needRemoveEnemy)
+			 {
+			 enemyPool.remove(b);
+			 }
+			 */
 		}
 		private void myPlaneUpdate()
 		{
             double fx = 0, fy = 0, dax, day, dx, dy, dist,  maxdist, dmax, mag1;
 			Ball a=myPlane;
-                // friction
-                a.vx *= damping;
-                a.vy *= damping;
+			// friction
+			a.vx *= damping;
+			a.vy *= damping;
 
-                // gravity
-                a.vx += gravity.x;
-                a.vy += gravity.y;
+			// gravity
+			a.vx += gravity.x;
+			a.vy += gravity.y;
 
-                //bounds check
-                if (a.x < a.radius) a.x = a.radius;
-                if (a.y < a.radius) a.y = a.radius;
-                if (a.x > getWidth() - a.radius) a.x = getWidth() - a.radius;
-                if (a.y > getHeight() - a.radius)a.y = getHeight() - a.radius;
-
-
-                dax = (a.x + a.vx);
-                day = (a.y + a.vy);
-                fx = fy = 0;
-
-                for (Ball b : eBulletPool)
-                {
-					//issame = false;
-                    if (a != b && coarseCollision(a, b))
-                    {
+			//bounds check
+			if (a.x < a.radius) a.x = a.radius;
+			if (a.y < a.radius) a.y = a.radius;
+			if (a.x > getWidth() - a.radius) a.x = getWidth() - a.radius;
+			if (a.y > getHeight() - a.radius)a.y = getHeight() - a.radius;
 
 
-                        dx = dax - b.x;
-                        dy = day - b.y;
+			dax = (a.x + a.vx);
+			day = (a.y + a.vy);
+			fx = fy = 0;
 
-                        dist = Math.sqrt(dx * dx + dy * dy);
-                        maxdist = a.radius + b.radius;
+			for (Ball b : eBulletPool)
+			{
+				//issame = false;
+				if (a != b && coarseCollision(a, b))
+				{
 
-                        dmax = (maxdist - dist);
 
-                        if (dmax > 0)
-                        {
-							//if they are same then dispear themself
-							if (startremove)
-							{
-								//issame = (a.color1 == b.color1 && a.color2 == b.color2);
-						//		issame = (a.color1 == b.color1) ;//&& a.color2 == b.color2);
+					dx = dax - b.x;
+					dy = day - b.y;
 
-							    
-									needremove.add(b);
-								//	needremove.add(a);
-								//	if (vibrator != null)
-								//		vibrator.vibrate(50);
-									break;
-								
-							}
-                            mag1 = dmax * collisionDamping / maxdist;
-                            fx += dx * mag1;
-                            fy += dy * mag1;
-                        }
+					dist = Math.sqrt(dx * dx + dy * dy);
+					maxdist = a.radius + b.radius;
 
-                    }
-                }
-				
-                a.vx += fx;
-                a.vy += fy;
+					dmax = (maxdist - dist);
 
-                a.x += a.vx;
-                a.y += a.vy;
+					if (dmax > 0)
+					{
+						//if they are same then dispear themself
+						if (startremove)
+						{
+							//issame = (a.color1 == b.color1 && a.color2 == b.color2);
+							//		issame = (a.color1 == b.color1) ;//&& a.color2 == b.color2);
 
-            
+
+							needremove.add(b);
+							//	needremove.add(a);
+							//	if (vibrator != null)
+							//		vibrator.vibrate(50);
+							break;
+
+						}
+						mag1 = dmax * collisionDamping / maxdist;
+						fx += dx * mag1;
+						fy += dy * mag1;
+					}
+
+				}
+			}
+
+			a.vx += fx;
+			a.vy += fy;
+
+			a.x += a.vx;
+			a.y += a.vy;
+
+
 			if (startremove)
 				dispear(needremove, eBulletPool);
         }
@@ -585,18 +679,18 @@ public class MainActivity extends Activity
 				float x=event.getX(i);
 				float y=event.getY(i);
 				/*
-				if (processFunArea(x, y))
-				{
-					return true;
-				}
-				//处理模式
-				if (processMode2(x, y))
-					return true;
-				*/
-				myPlane.touchMove(x,y);
-				Ball bu=new Ball(myPlane.x,myPlane.y,10);
-				bu.vx=myPlane.vx;
-				bu.vy=40;
+				 if (processFunArea(x, y))
+				 {
+				 return true;
+				 }
+				 //处理模式
+				 if (processMode2(x, y))
+				 return true;
+				 */
+				myPlane.touchMove(x, y);
+				Ball bu=new Ball(myPlane.x, myPlane.y, 10);
+				bu.vx = myPlane.vx;
+				bu.vy = 40;
 				myBulletPool.add(bu);
 			}
 
@@ -653,20 +747,25 @@ public class MainActivity extends Activity
 				return radius > Math.sqrt((this.x - x) * (this.x - x) + (this.y - y) * (this.y - y));
 			}
         }
-		private class MyPlane extends Ball{
-			public MyPlane(double x,double y,double radius){
-				super(x,y,radius);
+		private class MyPlane extends Ball
+		{
+			public MyPlane(double x, double y, double radius)
+			{
+				super(x, y, radius);
 			}
-			public void touchMove(float ex, float ey){
-				if(super.isInBall(ex,ey))
+			public void touchMove(float ex, float ey)
+			{
+				if (super.isInBall(ex, ey))
 				{
-					
-					super.x=ex;
-					super.y=ey;
-					
-				}else{
-					vx+=(ex-x)/30;
-					vy+=(ey-y)/30;
+
+					super.x = ex;
+					super.y = ey;
+
+				}
+				else
+				{
+					vx += (ex - x) / 30;
+					vy += (ey - y) / 30;
 				}
 			}
 		}
