@@ -101,6 +101,29 @@ public class MainActivity extends Activity
         Window window = getWindow();
         window.setFormat(PixelFormat.RGBA_8888);
     }
+	@Override
+	public void onStop()
+	{
+		super.onStop();
+		if (physics != null)
+	    	physics.stop();
+
+	}
+	@Override
+	public void onPause()
+	{
+		super.onPause();
+		if (physics != null)
+		//	super.onPause();
+			physics.pause();
+	}
+	@Override
+	public void onResume()
+	{
+		super.onResume();
+		if (physics != null)
+			physics.resume();
+	}
 
     public class BallPhysics extends View implements ITicker, SensorEventListener
     {
@@ -132,6 +155,7 @@ public class MainActivity extends Activity
 		private ArrayList<ClickBall> functionBalls;
 		private int life=100;
 		private int tscore=0;
+		Timer timer;
 
 
         public BallPhysics(Context context)
@@ -140,7 +164,22 @@ public class MainActivity extends Activity
             init(context);
 
         }
+		public void pause()
+		{
+			if (timer != null)
+				timer.pause();
+		}
+		public void resume()
+		{
+			if (timer != null)
+				timer.start();
+		}
+		public void stop()
+		{
 
+			if (timer != null)
+				timer.stop();
+		}
         private void init(Context context)
         {
             setFocusable(true);
@@ -168,7 +207,7 @@ public class MainActivity extends Activity
 			InitialMyPlane();
 			initialEnemy();
 
-            Timer timer = new Timer(30, this);
+            timer = new Timer(30, this);
             timer.start();
 
         }
@@ -186,7 +225,7 @@ public class MainActivity extends Activity
 			for (int i=0;i < 10;i++)
 			{
 				Ball eb=new Ball(Math.random() * UtilityHelper.SCREEN_WIDTH
-								 , 0, 15+Math.random()*20);
+								 , 0, 15 + Math.random() * 20);
 				eb.color1 = 3;
 				eb.color2 = 4;
 				eb.vy = Math.random() * 10;
@@ -258,6 +297,19 @@ public class MainActivity extends Activity
 			rgbColor(colors[myPlane.color2]);
 			canvas.drawCircle(myPlane.x, myPlane.y, (float)(myPlane.radius * Constants.oneByGoldenRatio), paint);
 		}
+		private void DrawMyplane(Ball myPlane, Canvas canvas)
+		{
+			rgbColor(colors[myPlane.color1]);
+			myPlane.draw(canvas, paint);
+			rgbColor(colors[myPlane.color2]);
+
+			canvas.drawCircle(myPlane.x, myPlane.y, (float)(myPlane.radius * Constants.oneByGoldenRatio), paint);
+			int rwidth=6;
+			int rheight=90;	
+			float rx=myPlane.x - rwidth / 2;
+			float ry=myPlane.y - rheight / 2;
+			canvas.drawRect(rx, ry, rx + rwidth, ry + rheight, paint);	
+		}
         @Override
         protected void onDraw(Canvas canvas)
         {
@@ -265,20 +317,23 @@ public class MainActivity extends Activity
 			{
 				DrawBall(b, canvas);
 			}
-			for(Ball eb:eBulletPool)
+			for (Ball eb:eBulletPool)
 			{
-				DrawBall(eb,canvas);
+				DrawBall(eb, canvas);
 			}
 			for (Ball bu:myBulletPool)
 			{
 				DrawBall(bu, canvas);
 			}
-			DrawBall(myPlane, canvas);
-			String gmsg="Life={1}, Score={2}";
-			gmsg=gmsg.replace("{1}",""+life)
-				.replace("{2}",""+tscore);
+			DrawMyplane(myPlane, canvas);
+			String gmsg="Life={1}, Score={2}, E={3}, EB={4}, MB={5}";
+			gmsg = gmsg.replace("{1}", "" + life)
+				.replace("{2}", "" + tscore)
+				.replace("{3}", "" + enemyPool.size())
+				.replace("{4}", "" + eBulletPool.size())
+				.replace("{5}", "" + myBulletPool.size());
 			paint.setColor(Color.WHITE);
-			paint.setTextSize(20); 
+			paint.setTextSize(30); 
 			canvas.drawText(gmsg, 5, 25, paint);	
 
 			/*
@@ -404,32 +459,35 @@ public class MainActivity extends Activity
 			enemyUpdate();
 			eBulletUpdate();
 		}
-		private void eBulletUpdate(){
+		private void eBulletUpdate()
+		{
 			boolean isHit=false;
-			
+
 			ArrayList<Ball> clear=new ArrayList<Ball>();	
-			for (Ball a:eBulletPool){
-				if(a.y>UtilityHelper.SCREEN_HEIGHT
-				||a.x<0||a.x>UtilityHelper.SCREEN_WIDTH
-				||a.y<0){
-					clear.add(a);
-					continue;
-				}
-				if(coarseCollision(a,myPlane))
-				{
-					isHit=true;
-					life-=1;
-					clear.add(a);
-					continue;
-				}
-				a.x+=a.vx;
-				a.y+=a.vy;
-			}
-			if(clear.size()>0)
+			for (Ball a:eBulletPool)
 			{
-				clear(eBulletPool,clear);
+				if (a.y > UtilityHelper.SCREEN_HEIGHT
+					|| a.x < 0 || a.x > UtilityHelper.SCREEN_WIDTH
+					|| a.y < 0)
+				{
+					clear.add(a);
+					continue;
+				}
+				if (coarseCollision(a, myPlane))
+				{
+					isHit = true;
+					life -= 1;
+					clear.add(a);
+					continue;
+				}
+				a.x += a.vx;
+				a.y += a.vy;
 			}
-			if(isHit)
+			if (clear.size() > 0)
+			{
+				clear(eBulletPool, clear);
+			}
+			if (isHit)
 				vibrate();
 		}
 		private void enemyUpdate()
@@ -450,26 +508,26 @@ public class MainActivity extends Activity
 				if (coarseCollision(a, myPlane))
 				{
 					clear.add(a);
-					life-=5;
+					life -= 5;
 					continue;
 				}
 				//敌人移动
 				a.x += a.vx;
 				a.y += a.vy;
 				//发射
-				if(Math.random()*100>97)
+				if (Math.random() * 100 > 97)
 				{
-					Ball ebu=new Ball(a.x,a.y,8);
-					ebu.color1=5;
-					ebu.color2=6;
-			        if(myPlane.y<a.y)
-					    ebu.vy=(-1)*(a.vy+20);
+					Ball ebu=new Ball(a.x, a.y, 8);
+					ebu.color1 = 5;
+					ebu.color2 = 6;
+			        if (myPlane.y < a.y)
+					    ebu.vy = (-1) * (a.vy + 20);
 					else
-						ebu.vy=a.vy+20;
-					ebu.vx=	(myPlane.x-ebu.x)/( (myPlane.y-ebu.y)/ebu.vy);
+						ebu.vy = a.vy + 20;
+					ebu.vx =	(myPlane.x - ebu.x) / ((myPlane.y - ebu.y) / ebu.vy);
 					eBulletPool.add(ebu);
 				}
-				
+
 
 			}
 			if (clear.size() > 0)
@@ -521,7 +579,7 @@ public class MainActivity extends Activity
 						//	needRemoveEnemy.add(eb);
 						eb.y = 0;
 						eb.x = (float)Math.random() * UtilityHelper.SCREEN_WIDTH;
-                        tscore+=5;
+                        tscore += 5;
 						continue;
 					}
 
