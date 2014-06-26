@@ -228,7 +228,7 @@ public class MainActivity extends Activity
 		{
 			myPlane = new MyPlane(UtilityHelper.SCREEN_WIDTH / 2
 								  , UtilityHelper.SCREEN_HEIGHT * 3 / 4
-								  , 40);
+								  , 60);
 			myPlane.color1 = 0;
 			myPlane.color2 = 1;
 			//pool.add(myPlane);
@@ -310,12 +310,19 @@ public class MainActivity extends Activity
 			//	rgbColor(colors[myPlane.color2]);
 			//canvas.drawCircle(myPlane.x, myPlane.y, (float)(myPlane.radius * Constants.oneByGoldenRatio), paint);
 		}
+		private void DrawEnemy(Ball myPlane, Canvas canvas)
+		{
+	//		rgbColor(colors[myPlane.color1]);
+	//		myPlane.draw(canvas, paint);
+			//	rgbColor(colors[myPlane.color2]);
+			//canvas.drawCircle(myPlane.x, myPlane.y, (float)(myPlane.radius * Constants.oneByGoldenRatio), paint);
+		}
 		private void DrawMyplane(Ball myPlane, Canvas canvas)
 		{
-			rgbColor(colors[myPlane.color1]);
+	//		rgbColor(colors[myPlane.color1]);
 
 
-			myPlane.draw(canvas, paint);
+	//		myPlane.draw(canvas, paint);
 			//	rgbColor(colors[myPlane.color2]);
 
 			//	canvas.drawCircle(myPlane.x, myPlane.y, (float)(myPlane.radius * Constants.oneByGoldenRatio), paint);
@@ -336,12 +343,12 @@ public class MainActivity extends Activity
 			{
 				//DrawBall(b, canvas);
 				if (b.radius >= 15 && b.radius <= 21)
-					canvas.drawBitmap(e20bmp, b.x - 10, b.y - 10, paint);
+					canvas.drawBitmap(e20bmp, b.x - e20bmp.getWidth()/2, b.y - e20bmp.getHeight()/2, paint);
 				else if (b.radius > 21 && b.radius <= 29)
-					canvas.drawBitmap(e30bmp, b.x - 15, b.y - 15, paint);
+					canvas.drawBitmap(e30bmp, b.x - e30bmp.getWidth()/2, b.y - e30bmp.getHeight()/2, paint);
 				else 
-					canvas.drawBitmap(e40bmp, b.x - 20, b.y - 20, paint);
-				DrawBall(b,canvas);
+					canvas.drawBitmap(e40bmp, b.x - e40bmp.getWidth()/2, b.y - e40bmp.getHeight()/2, paint);
+				DrawEnemy(b,canvas);
 			}
 			paint.setStyle(Paint.Style.FILL);
 			for (Ball eb:eBulletPool)
@@ -354,7 +361,7 @@ public class MainActivity extends Activity
 			}
 			paint.setStyle(Paint.Style.STROKE);
 			//DrawMyplane(myPlane, canvas);
-			canvas.drawBitmap(p56bmp, myPlane.x - 28, myPlane.y - 28, paint);
+			canvas.drawBitmap(p56bmp, myPlane.x - p56bmp.getWidth()/2, myPlane.y - p56bmp.getHeight()/2, paint);
 			DrawMyplane(myPlane,canvas);
 			String gmsg="Life={1}, Score={2}, E={3}, EB={4}, MB={5}";
 			gmsg = gmsg.replace("{1}", "" + life)
@@ -523,6 +530,8 @@ public class MainActivity extends Activity
 		private void enemyUpdate()
 		{
 			ArrayList<Ball> clear=new ArrayList<Ball>();
+			boolean crash=false;
+			
 
 			for (Ball a:enemyPool)
 			{
@@ -537,7 +546,11 @@ public class MainActivity extends Activity
 				//撞毁
 				if (coarseCollision(a, myPlane))
 				{
-					clear.add(a);
+				//	clear.add(a);
+				crash=true;
+					a.y = 0;
+					a.x = (float)Math.random() * UtilityHelper.SCREEN_WIDTH;
+					a.vy=Math.random()*10;
 					life -= 5;
 					continue;
 				}
@@ -560,9 +573,10 @@ public class MainActivity extends Activity
 
 
 			}
-			if (clear.size() > 0)
+		//	if (clear.size() > 0)
+		    if(crash)
 			{
-				clear(enemyPool, clear);
+			//	clear(enemyPool, clear);
 				//震动
 				vibrate();
 			}
@@ -609,7 +623,8 @@ public class MainActivity extends Activity
 						//	needRemoveEnemy.add(eb);
 						eb.y = 0;
 						eb.x = (float)Math.random() * UtilityHelper.SCREEN_WIDTH;
-                        tscore += 5;
+                       eb.vy=Math.random()*10;
+					   tscore += 5;
 						continue;
 					}
 
