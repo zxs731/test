@@ -37,6 +37,9 @@ import java.util.*;
 import android.os.Vibrator;  
 import android.util.DisplayMetrics;
 import java.math.*;
+import android.graphics.Bitmap; 
+import android.graphics.Bitmap.Config; 
+import android.graphics.BitmapFactory; 
 
 
 
@@ -49,6 +52,10 @@ public class MainActivity extends Activity
 	int score;
 	String statusmsg="";
 	Vibrator vibrator=null ;
+	Bitmap e20bmp;
+	Bitmap e30bmp;
+	Bitmap e40bmp;
+	Bitmap p56bmp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -75,6 +82,12 @@ public class MainActivity extends Activity
         LayoutParams full = new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
         addContentView(physics, full);
         mainActivity = this;
+		e20bmp = BitmapFactory.decodeResource(getResources(), R.drawable.enemy20);  
+		e30bmp = BitmapFactory.decodeResource(getResources(), R.drawable.enemy30);
+		e40bmp = BitmapFactory.decodeResource(getResources(), R.drawable.enemy40);
+		p56bmp = BitmapFactory.decodeResource(getResources(), R.drawable.p56);
+
+
 
         //new thread
         new Thread(new Runnable(){
@@ -226,7 +239,7 @@ public class MainActivity extends Activity
 			{
 				Ball eb=new Ball(Math.random() * UtilityHelper.SCREEN_WIDTH
 								 , 0, 15 + Math.random() * 20);
-				eb.color1 = 3;
+				eb.color1 = 6;
 				eb.color2 = 4;
 				eb.vy = Math.random() * 10;
 				eb.vx = 0;
@@ -294,29 +307,43 @@ public class MainActivity extends Activity
 		{
 			rgbColor(colors[myPlane.color1]);
 			myPlane.draw(canvas, paint);
-			rgbColor(colors[myPlane.color2]);
-			canvas.drawCircle(myPlane.x, myPlane.y, (float)(myPlane.radius * Constants.oneByGoldenRatio), paint);
+			//	rgbColor(colors[myPlane.color2]);
+			//canvas.drawCircle(myPlane.x, myPlane.y, (float)(myPlane.radius * Constants.oneByGoldenRatio), paint);
 		}
 		private void DrawMyplane(Ball myPlane, Canvas canvas)
 		{
 			rgbColor(colors[myPlane.color1]);
-			myPlane.draw(canvas, paint);
-			rgbColor(colors[myPlane.color2]);
 
-			canvas.drawCircle(myPlane.x, myPlane.y, (float)(myPlane.radius * Constants.oneByGoldenRatio), paint);
-			int rwidth=6;
-			int rheight=90;	
-			float rx=myPlane.x - rwidth / 2;
-			float ry=myPlane.y - rheight / 2;
-			canvas.drawRect(rx, ry, rx + rwidth, ry + rheight, paint);	
+
+			myPlane.draw(canvas, paint);
+			//	rgbColor(colors[myPlane.color2]);
+
+			//	canvas.drawCircle(myPlane.x, myPlane.y, (float)(myPlane.radius * Constants.oneByGoldenRatio), paint);
+			/*
+			 int rwidth=6;
+			 int rheight=90;	
+			 float rx=myPlane.x - rwidth / 2;
+			 float ry=myPlane.y - rheight / 2;
+			 canvas.drawRect(rx, ry, rx + rwidth, ry + rheight, paint);	
+			 */
 		}
         @Override
         protected void onDraw(Canvas canvas)
         {
+			paint.setStrokeWidth(3);
+			paint.setStyle(Paint.Style.STROKE);
 			for (Ball b:enemyPool)
 			{
-				DrawBall(b, canvas);
+				//DrawBall(b, canvas);
+				if (b.radius >= 15 && b.radius <= 21)
+					canvas.drawBitmap(e20bmp, b.x - 10, b.y - 10, paint);
+				else if (b.radius > 21 && b.radius <= 29)
+					canvas.drawBitmap(e30bmp, b.x - 15, b.y - 15, paint);
+				else 
+					canvas.drawBitmap(e40bmp, b.x - 20, b.y - 20, paint);
+				DrawBall(b,canvas);
 			}
+			paint.setStyle(Paint.Style.FILL);
 			for (Ball eb:eBulletPool)
 			{
 				DrawBall(eb, canvas);
@@ -325,7 +352,10 @@ public class MainActivity extends Activity
 			{
 				DrawBall(bu, canvas);
 			}
-			DrawMyplane(myPlane, canvas);
+			paint.setStyle(Paint.Style.STROKE);
+			//DrawMyplane(myPlane, canvas);
+			canvas.drawBitmap(p56bmp, myPlane.x - 28, myPlane.y - 28, paint);
+			DrawMyplane(myPlane,canvas);
 			String gmsg="Life={1}, Score={2}, E={3}, EB={4}, MB={5}";
 			gmsg = gmsg.replace("{1}", "" + life)
 				.replace("{2}", "" + tscore)
@@ -518,8 +548,8 @@ public class MainActivity extends Activity
 				if (Math.random() * 100 > 97)
 				{
 					Ball ebu=new Ball(a.x, a.y, 8);
-					ebu.color1 = 5;
-					ebu.color2 = 6;
+					ebu.color1 = 6;
+					ebu.color2 = 5;
 			        if (myPlane.y < a.y)
 					    ebu.vy = (-1) * (a.vy + 20);
 					else
