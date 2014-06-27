@@ -82,11 +82,18 @@ public class MainActivity extends Activity
         LayoutParams full = new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
         addContentView(physics, full);
         mainActivity = this;
+
+	//	BitmapFactory.Options opt = new BitmapFactory.Options();
+//		opt.inPreferredConfig = Config.ALPHA_8;
 		e20bmp = BitmapFactory.decodeResource(getResources(), R.drawable.enemy20);  
 		e30bmp = BitmapFactory.decodeResource(getResources(), R.drawable.enemy30);
+//		e30bmp=e30bmp.copy
+//		(Config.ARGB_8888, true);
+	
+//	e30bmp.eraseColor(Color.BLACK);
 		e40bmp = BitmapFactory.decodeResource(getResources(), R.drawable.enemy40);
 		p56bmp = BitmapFactory.decodeResource(getResources(), R.drawable.p56);
-
+    //    p56bmp.eraseColor(Color.BLACK);
 
 
         //new thread
