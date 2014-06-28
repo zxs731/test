@@ -85,14 +85,14 @@ public class MainActivity extends Activity
 
 	//	BitmapFactory.Options opt = new BitmapFactory.Options();
 //		opt.inPreferredConfig = Config.ALPHA_8;
-		e20bmp = BitmapFactory.decodeResource(getResources(), R.drawable.enemy20);  
-		e30bmp = BitmapFactory.decodeResource(getResources(), R.drawable.enemy30);
-//		e30bmp=e30bmp.copy
-//		(Config.ARGB_8888, true);
+		e20bmp = processBMP(R.drawable.enemy20); //BitmapFactory.decodeResource(getResources(), R.drawable.enemy20);  
+		e30bmp = processBMP(R.drawable.enemy30);
+		
+	
 	
 //	e30bmp.eraseColor(Color.BLACK);
-		e40bmp = BitmapFactory.decodeResource(getResources(), R.drawable.enemy40);
-		p56bmp = BitmapFactory.decodeResource(getResources(), R.drawable.p56);
+		e40bmp =processBMP(R.drawable.enemy40);// BitmapFactory.decodeResource(getResources(), R.drawable.enemy40);
+		p56bmp =processBMP(R.drawable.p56);// BitmapFactory.decodeResource(getResources(), R.drawable.p56);
     //    p56bmp.eraseColor(Color.BLACK);
 
 
@@ -113,6 +113,24 @@ public class MainActivity extends Activity
 
 
     }
+	private Bitmap processBMP(int resId){
+		Bitmap bmp = BitmapFactory.decodeResource(getResources(), resId);
+	
+	bmp=bmp.copy
+		(Config.ARGB_8888, true);
+		
+		for(int i=0;i<bmp.getWidth();i++)
+		{
+			for(int j=0;j<bmp.getHeight();j++)
+			{
+				if(bmp.getPixel(i,j)==Color.BLACK)
+			    	bmp.setPixel(i,j,Color.alpha(0));
+			}
+		}
+		
+		bmp.setHasAlpha(true);
+		return bmp;
+	}
 
     @Override
     public void onAttachedToWindow()
@@ -326,6 +344,23 @@ public class MainActivity extends Activity
 		}
 		private void DrawMyplane(Ball myPlane, Canvas canvas)
 		{
+			rgbColor(colors[2]);
+			paint.setStyle(Paint.Style.FILL);
+			if(myPlane.vx>0)
+			{
+			   // canvas.drawRect(myPlane.x-p56bmp.getWidth()/2-15,myPlane.y,myPlane.x-p56bmp.getWidth()/2,myPlane.y+15,paint);
+				canvas.drawCircle(myPlane.x-p56bmp.getWidth()/2*3/4, myPlane.y+p56bmp.getHeight()/2,8, paint);
+			}else
+			{
+			//	canvas.drawRect(myPlane.x+p56bmp.getWidth()/2,myPlane.y,myPlane.x+p56bmp.getWidth()/2+15,myPlane.y+15,paint);
+				canvas.drawCircle(myPlane.x+p56bmp.getWidth()/2*3/4, myPlane.y+p56bmp.getHeight()/2,8, paint);
+			}
+			if(myPlane.vy<0)
+			{
+				
+				canvas.drawCircle(myPlane.x, myPlane.y+p56bmp.getHeight()/2,15, paint);
+			}
+			paint.setStyle(Paint.Style.STROKE);
 	//		rgbColor(colors[myPlane.color1]);
 
 
