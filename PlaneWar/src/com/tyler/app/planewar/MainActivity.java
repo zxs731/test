@@ -83,17 +83,17 @@ public class MainActivity extends Activity
         addContentView(physics, full);
         mainActivity = this;
 
-	//	BitmapFactory.Options opt = new BitmapFactory.Options();
+		//	BitmapFactory.Options opt = new BitmapFactory.Options();
 //		opt.inPreferredConfig = Config.ALPHA_8;
 		e20bmp = processBMP(R.drawable.enemy20); //BitmapFactory.decodeResource(getResources(), R.drawable.enemy20);  
 		e30bmp = processBMP(R.drawable.enemy30);
-		
-	
-	
+
+
+
 //	e30bmp.eraseColor(Color.BLACK);
-		e40bmp =processBMP(R.drawable.enemy40);// BitmapFactory.decodeResource(getResources(), R.drawable.enemy40);
-		p56bmp =processBMP(R.drawable.p56);// BitmapFactory.decodeResource(getResources(), R.drawable.p56);
-    //    p56bmp.eraseColor(Color.BLACK);
+		e40bmp = processBMP(R.drawable.enemy40);// BitmapFactory.decodeResource(getResources(), R.drawable.enemy40);
+		p56bmp = processBMP(R.drawable.p56);// BitmapFactory.decodeResource(getResources(), R.drawable.p56);
+		//    p56bmp.eraseColor(Color.BLACK);
 
 
         //new thread
@@ -113,21 +113,22 @@ public class MainActivity extends Activity
 
 
     }
-	private Bitmap processBMP(int resId){
+	private Bitmap processBMP(int resId)
+	{
 		Bitmap bmp = BitmapFactory.decodeResource(getResources(), resId);
-	
-	bmp=bmp.copy
+
+		bmp = bmp.copy
 		(Config.ARGB_8888, true);
-		
-		for(int i=0;i<bmp.getWidth();i++)
+
+		for (int i=0;i < bmp.getWidth();i++)
 		{
-			for(int j=0;j<bmp.getHeight();j++)
+			for (int j=0;j < bmp.getHeight();j++)
 			{
-				if(bmp.getPixel(i,j)==Color.BLACK)
-			    	bmp.setPixel(i,j,Color.alpha(0));
+				if (bmp.getPixel(i, j) == Color.BLACK)
+			    	bmp.setPixel(i, j, Color.alpha(0));
 			}
 		}
-		
+
 		bmp.setHasAlpha(true);
 		return bmp;
 	}
@@ -194,6 +195,7 @@ public class MainActivity extends Activity
 		private int life=100;
 		private int tscore=0;
 		Timer timer;
+		boolean autoshot=false;
 
 
         public BallPhysics(Context context)
@@ -252,7 +254,7 @@ public class MainActivity extends Activity
 		private void InitialMyPlane()
 		{
 			myPlane = new MyPlane(UtilityHelper.SCREEN_WIDTH / 2
-								  , UtilityHelper.SCREEN_HEIGHT * 3 / 4
+								  , UtilityHelper.SCREEN_HEIGHT /2
 								  , 60);
 			myPlane.color1 = 0;
 			myPlane.color2 = 1;
@@ -337,8 +339,8 @@ public class MainActivity extends Activity
 		}
 		private void DrawEnemy(Ball myPlane, Canvas canvas)
 		{
-	//		rgbColor(colors[myPlane.color1]);
-	//		myPlane.draw(canvas, paint);
+			//		rgbColor(colors[myPlane.color1]);
+			//		myPlane.draw(canvas, paint);
 			//	rgbColor(colors[myPlane.color2]);
 			//canvas.drawCircle(myPlane.x, myPlane.y, (float)(myPlane.radius * Constants.oneByGoldenRatio), paint);
 		}
@@ -346,25 +348,26 @@ public class MainActivity extends Activity
 		{
 			rgbColor(colors[2]);
 			paint.setStyle(Paint.Style.FILL);
-			if(myPlane.vx>0)
+			if (myPlane.vx > 0)
 			{
-			   // canvas.drawRect(myPlane.x-p56bmp.getWidth()/2-15,myPlane.y,myPlane.x-p56bmp.getWidth()/2,myPlane.y+15,paint);
-				canvas.drawCircle(myPlane.x-p56bmp.getWidth()/2*3/4, myPlane.y+p56bmp.getHeight()/2,8, paint);
-			}else
-			{
-			//	canvas.drawRect(myPlane.x+p56bmp.getWidth()/2,myPlane.y,myPlane.x+p56bmp.getWidth()/2+15,myPlane.y+15,paint);
-				canvas.drawCircle(myPlane.x+p56bmp.getWidth()/2*3/4, myPlane.y+p56bmp.getHeight()/2,8, paint);
+				// canvas.drawRect(myPlane.x-p56bmp.getWidth()/2-15,myPlane.y,myPlane.x-p56bmp.getWidth()/2,myPlane.y+15,paint);
+				canvas.drawCircle(myPlane.x - p56bmp.getWidth() / 2 * 3 / 4, myPlane.y + p56bmp.getHeight() / 2, 8, paint);
 			}
-			if(myPlane.vy<0)
+			else
 			{
-				
-				canvas.drawCircle(myPlane.x, myPlane.y+p56bmp.getHeight()/2,15, paint);
+				//	canvas.drawRect(myPlane.x+p56bmp.getWidth()/2,myPlane.y,myPlane.x+p56bmp.getWidth()/2+15,myPlane.y+15,paint);
+				canvas.drawCircle(myPlane.x + p56bmp.getWidth() / 2 * 3 / 4, myPlane.y + p56bmp.getHeight() / 2, 8, paint);
+			}
+			if (myPlane.vy < 0)
+			{
+
+				canvas.drawCircle(myPlane.x, myPlane.y + p56bmp.getHeight() / 2, 15, paint);
 			}
 			paint.setStyle(Paint.Style.STROKE);
-	//		rgbColor(colors[myPlane.color1]);
+			//		rgbColor(colors[myPlane.color1]);
 
 
-	//		myPlane.draw(canvas, paint);
+			//		myPlane.draw(canvas, paint);
 			//	rgbColor(colors[myPlane.color2]);
 
 			//	canvas.drawCircle(myPlane.x, myPlane.y, (float)(myPlane.radius * Constants.oneByGoldenRatio), paint);
@@ -385,12 +388,12 @@ public class MainActivity extends Activity
 			{
 				//DrawBall(b, canvas);
 				if (b.radius >= 15 && b.radius <= 21)
-					canvas.drawBitmap(e20bmp, b.x - e20bmp.getWidth()/2, b.y - e20bmp.getHeight()/2, paint);
+					canvas.drawBitmap(e20bmp, b.x - e20bmp.getWidth() / 2, b.y - e20bmp.getHeight() / 2, paint);
 				else if (b.radius > 21 && b.radius <= 29)
-					canvas.drawBitmap(e30bmp, b.x - e30bmp.getWidth()/2, b.y - e30bmp.getHeight()/2, paint);
+					canvas.drawBitmap(e30bmp, b.x - e30bmp.getWidth() / 2, b.y - e30bmp.getHeight() / 2, paint);
 				else 
-					canvas.drawBitmap(e40bmp, b.x - e40bmp.getWidth()/2, b.y - e40bmp.getHeight()/2, paint);
-				DrawEnemy(b,canvas);
+					canvas.drawBitmap(e40bmp, b.x - e40bmp.getWidth() / 2, b.y - e40bmp.getHeight() / 2, paint);
+				DrawEnemy(b, canvas);
 			}
 			paint.setStyle(Paint.Style.FILL);
 			for (Ball eb:eBulletPool)
@@ -403,8 +406,8 @@ public class MainActivity extends Activity
 			}
 			paint.setStyle(Paint.Style.STROKE);
 			//DrawMyplane(myPlane, canvas);
-			canvas.drawBitmap(p56bmp, myPlane.x - p56bmp.getWidth()/2, myPlane.y - p56bmp.getHeight()/2, paint);
-			DrawMyplane(myPlane,canvas);
+			canvas.drawBitmap(p56bmp, myPlane.x - p56bmp.getWidth() / 2, myPlane.y - p56bmp.getHeight() / 2, paint);
+			DrawMyplane(myPlane, canvas);
 			String gmsg="Life={1}, Score={2}, E={3}, EB={4}, MB={5}";
 			gmsg = gmsg.replace("{1}", "" + life)
 				.replace("{2}", "" + tscore)
@@ -573,7 +576,7 @@ public class MainActivity extends Activity
 		{
 			ArrayList<Ball> clear=new ArrayList<Ball>();
 			boolean crash=false;
-			
+
 
 			for (Ball a:enemyPool)
 			{
@@ -588,11 +591,11 @@ public class MainActivity extends Activity
 				//撞毁
 				if (coarseCollision(a, myPlane))
 				{
-				//	clear.add(a);
-				crash=true;
+					//	clear.add(a);
+					crash = true;
 					a.y = 0;
 					a.x = (float)Math.random() * UtilityHelper.SCREEN_WIDTH;
-					a.vy=Math.random()*10;
+					a.vy = Math.random() * 10;
 					life -= 5;
 					continue;
 				}
@@ -615,10 +618,10 @@ public class MainActivity extends Activity
 
 
 			}
-		//	if (clear.size() > 0)
-		    if(crash)
+			//	if (clear.size() > 0)
+		    if (crash)
 			{
-			//	clear(enemyPool, clear);
+				//	clear(enemyPool, clear);
 				//震动
 				vibrate();
 			}
@@ -665,8 +668,8 @@ public class MainActivity extends Activity
 						//	needRemoveEnemy.add(eb);
 						eb.y = 0;
 						eb.x = (float)Math.random() * UtilityHelper.SCREEN_WIDTH;
-                       eb.vy=Math.random()*10;
-					   tscore += 5;
+						eb.vy = Math.random() * 10;
+						tscore += 5;
 						continue;
 					}
 
@@ -760,6 +763,16 @@ public class MainActivity extends Activity
 
 			if (startremove)
 				dispear(needremove, eBulletPool);
+			if(autoshot)
+			{
+			if (myPlane.vx != 0 || myPlane.vy != 0)
+			{
+				Ball bu=new Ball(myPlane.x, myPlane.y, 8);
+				bu.vx = myPlane.vx;
+				bu.vy = 40;
+				myBulletPool.add(bu);
+			}
+			}
         }
 		private void dispear(ArrayList<Ball> balls, ArrayList<Ball> pool)
 		{
@@ -818,6 +831,9 @@ public class MainActivity extends Activity
         public boolean onTouchEvent(MotionEvent event)
         {
 			int touchcount= event.getPointerCount();
+			if(touchcount>2)
+				autoshot=!autoshot;
+				
 			for (int i=0;i < touchcount;i++)
 			{
 				//处理功能区
@@ -833,10 +849,13 @@ public class MainActivity extends Activity
 				 return true;
 				 */
 				myPlane.touchMove(x, y);
+				if(!autoshot)
+				{
 				Ball bu=new Ball(myPlane.x, myPlane.y, 10);
 				bu.vx = myPlane.vx;
 				bu.vy = 40;
 				myBulletPool.add(bu);
+				}
 			}
 
             return true;
