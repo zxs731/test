@@ -339,6 +339,13 @@ public class MainActivity extends Activity
 		}
 		private void DrawEnemy(Ball myPlane, Canvas canvas)
 		{
+			Ball b=myPlane;
+			if (b.radius >= 15 && b.radius <= 21)
+				canvas.drawBitmap(e20bmp, b.x - e20bmp.getWidth() / 2, b.y - e20bmp.getHeight() / 2, paint);
+			else if (b.radius > 21 && b.radius <= 29)
+				canvas.drawBitmap(e30bmp, b.x - e30bmp.getWidth() / 2, b.y - e30bmp.getHeight() / 2, paint);
+			else 
+				canvas.drawBitmap(e40bmp, b.x - e40bmp.getWidth() / 2, b.y - e40bmp.getHeight() / 2, paint);
 			//		rgbColor(colors[myPlane.color1]);
 			//		myPlane.draw(canvas, paint);
 			//	rgbColor(colors[myPlane.color2]);
@@ -346,22 +353,25 @@ public class MainActivity extends Activity
 		}
 		private void DrawMyplane(Ball myPlane, Canvas canvas)
 		{
+			paint.setStyle(Paint.Style.STROKE);
+			//DrawMyplane(myPlane, canvas);
+			canvas.drawBitmap(p56bmp, myPlane.x - p56bmp.getWidth() / 2, myPlane.y - p56bmp.getHeight() / 2, paint);
 			rgbColor(colors[2]);
 			paint.setStyle(Paint.Style.FILL);
 			if (myPlane.vx > 0)
 			{
 				// canvas.drawRect(myPlane.x-p56bmp.getWidth()/2-15,myPlane.y,myPlane.x-p56bmp.getWidth()/2,myPlane.y+15,paint);
-				canvas.drawCircle(myPlane.x - p56bmp.getWidth() / 2 * 3 / 4, myPlane.y + p56bmp.getHeight() / 2, 8, paint);
+				canvas.drawCircle(myPlane.x - p56bmp.getWidth() / 2 * 3 / 4, myPlane.y + p56bmp.getHeight() / 2, (float)(0.05*myPlane.vx)+5, paint);
 			}
 			else
 			{
 				//	canvas.drawRect(myPlane.x+p56bmp.getWidth()/2,myPlane.y,myPlane.x+p56bmp.getWidth()/2+15,myPlane.y+15,paint);
-				canvas.drawCircle(myPlane.x + p56bmp.getWidth() / 2 * 3 / 4, myPlane.y + p56bmp.getHeight() / 2, 8, paint);
+				canvas.drawCircle(myPlane.x + p56bmp.getWidth() / 2 * 3 / 4, myPlane.y + p56bmp.getHeight() / 2, (float)(-0.05*myPlane.vx)+5, paint);
 			}
 			if (myPlane.vy < 0)
 			{
 
-				canvas.drawCircle(myPlane.x, myPlane.y + p56bmp.getHeight() / 2, 15, paint);
+				canvas.drawCircle(myPlane.x, myPlane.y + p56bmp.getHeight() / 2, (float)(-0.1*myPlane.vy+5), paint);
 			}
 			paint.setStyle(Paint.Style.STROKE);
 			//		rgbColor(colors[myPlane.color1]);
@@ -387,12 +397,7 @@ public class MainActivity extends Activity
 			for (Ball b:enemyPool)
 			{
 				//DrawBall(b, canvas);
-				if (b.radius >= 15 && b.radius <= 21)
-					canvas.drawBitmap(e20bmp, b.x - e20bmp.getWidth() / 2, b.y - e20bmp.getHeight() / 2, paint);
-				else if (b.radius > 21 && b.radius <= 29)
-					canvas.drawBitmap(e30bmp, b.x - e30bmp.getWidth() / 2, b.y - e30bmp.getHeight() / 2, paint);
-				else 
-					canvas.drawBitmap(e40bmp, b.x - e40bmp.getWidth() / 2, b.y - e40bmp.getHeight() / 2, paint);
+				
 				DrawEnemy(b, canvas);
 			}
 			paint.setStyle(Paint.Style.FILL);
@@ -404,9 +409,7 @@ public class MainActivity extends Activity
 			{
 				DrawBall(bu, canvas);
 			}
-			paint.setStyle(Paint.Style.STROKE);
-			//DrawMyplane(myPlane, canvas);
-			canvas.drawBitmap(p56bmp, myPlane.x - p56bmp.getWidth() / 2, myPlane.y - p56bmp.getHeight() / 2, paint);
+			
 			DrawMyplane(myPlane, canvas);
 			String gmsg="Life={1}, Score={2}, E={3}, EB={4}, MB={5}";
 			gmsg = gmsg.replace("{1}", "" + life)
