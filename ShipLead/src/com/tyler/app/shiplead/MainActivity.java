@@ -40,6 +40,7 @@ import java.math.*;
 import android.graphics.Bitmap; 
 import android.graphics.Bitmap.Config; 
 import android.graphics.BitmapFactory; 
+import android.graphics.Matrix;
 
 
 
@@ -56,6 +57,7 @@ public class MainActivity extends Activity
 	Bitmap e30bmp;
 	Bitmap e40bmp;
 	Bitmap p56bmp;
+	Bitmap myplaneBMPOri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -93,6 +95,7 @@ public class MainActivity extends Activity
 //	e30bmp.eraseColor(Color.BLACK);
 		e40bmp = processBMP(R.drawable.enemy40);// BitmapFactory.decodeResource(getResources(), R.drawable.enemy40);
 		p56bmp = processBMP(R.drawable.p56);// BitmapFactory.decodeResource(getResources(), R.drawable.p56);
+		myplaneBMPOri=p56bmp;
 		//    p56bmp.eraseColor(Color.BLACK);
 
 
@@ -420,12 +423,13 @@ public class MainActivity extends Activity
 			}
 
 			DrawMyplane(myPlane, canvas);
-			String gmsg="Life={1}, Score={2}, E={3}, EB={4}, MB={5}";
+			String gmsg="A={6}, Life={1}, Score={2}, E={3}, EB={4}, MB={5}";
 			gmsg = gmsg.replace("{1}", "" + life)
 				.replace("{2}", "" + tscore)
 				.replace("{3}", "" + enemyPool.size())
 				.replace("{4}", "" + eBulletPool.size())
-				.replace("{5}", "" + myBulletPool.size());
+				.replace("{5}", "" + myBulletPool.size())
+				.replace("{6}", "" + myPlane.rotateAngle);	
 			paint.setColor(Color.WHITE);
 			paint.setTextSize(30); 
 			canvas.drawText(gmsg, 5, 25, paint);	
@@ -854,6 +858,7 @@ public class MainActivity extends Activity
 				return radius > Math.sqrt((this.x - x) * (this.x - x) + (this.y - y) * (this.y - y));
 			}
 			public ArrayList<Ball> traceList;
+			public float rotateAngle;
 			public void moveToNext()
 			{
 				ArrayList<Ball> needClear=new ArrayList<Ball>();
@@ -881,7 +886,7 @@ public class MainActivity extends Activity
 						float ny=(float)((b.y-myPlane.y)*l/dis+myPlane.y);
 						this.x=nx;
 						this.y=ny;
-					//	next = b;
+						next = b;
 						break;
 					}
 				}
@@ -905,20 +910,25 @@ public class MainActivity extends Activity
 					}
 				}
 				*/
+				
 				if (next != null)
 				{
-					this.x = next.x;
-					this.y = next.y;
+				//	this.x = next.x;
+				//	this.y = next.y;
+				 float rad=(float)Math.atan2((-1)*(pre.x-next.x),pre.y-next.y);//.atan( (-1)*(pre.x-next.x)/(pre.y-next.y));
+				 rotateAngle=radToDegree(rad);
+				 p56bmp=rotateBitmap(myplaneBMPOri,rotateAngle);
 				}
-				/*
-				if (needClear.size() > 0)
-				{
-					for (Ball a:needClear)
-					{
-						traceList.remove(a);
-					}
-				}
-				*/
+				
+			}
+			private Bitmap rotateBitmap(Bitmap bmp,float angle){
+				Matrix matrix=new Matrix();
+				matrix.setRotate(angle);
+				return Bitmap.createBitmap(bmp,0,0,bmp.getWidth(),bmp.getHeight(),matrix,false);
+			}
+			public float radToDegree(float rad){
+
+				return (float) (180*rad/Math.PI);
 			}
         }
 		private class MyPlane extends Ball
