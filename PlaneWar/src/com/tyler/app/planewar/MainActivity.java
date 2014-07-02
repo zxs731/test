@@ -85,7 +85,7 @@ public class MainActivity extends Activity
 
 		//	BitmapFactory.Options opt = new BitmapFactory.Options();
 //		opt.inPreferredConfig = Config.ALPHA_8;
-		e20bmp = processBMP(R.drawable.enemy20); //BitmapFactory.decodeResource(getResources(), R.drawable.enemy20);  
+		e20bmp = processBMP(R.drawable.en20); //BitmapFactory.decodeResource(getResources(), R.drawable.enemy20);  
 		e30bmp = processBMP(R.drawable.enemy30);
 
 
@@ -411,12 +411,14 @@ public class MainActivity extends Activity
 			}
 			
 			DrawMyplane(myPlane, canvas);
-			String gmsg="Life={1}, Score={2}, E={3}, EB={4}, MB={5}";
+			String gmsg="Life={1}, Score={2}, E={3}, EB={4}, MB={5},vx={6},vy={7}";
 			gmsg = gmsg.replace("{1}", "" + life)
 				.replace("{2}", "" + tscore)
 				.replace("{3}", "" + enemyPool.size())
 				.replace("{4}", "" + eBulletPool.size())
-				.replace("{5}", "" + myBulletPool.size());
+				.replace("{5}", "" + myBulletPool.size())
+				.replace("{6}", "" + (int)myPlane.vx)
+				.replace("{7}", "" + (int)myPlane.vy);
 			paint.setColor(Color.WHITE);
 			paint.setTextSize(30); 
 			canvas.drawText(gmsg, 5, 25, paint);	

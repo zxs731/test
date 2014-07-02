@@ -261,8 +261,8 @@ public class MainActivity extends Activity
 								  , 60);
 			myPlane.color1 = 0;
 			myPlane.color2 = 1;
-			myPlane.vx = 10;
-			myPlane.vy = 10;
+			myPlane.vx = 20;
+			myPlane.vy = 20;
 			//pool.add(myPlane);
 		}
 		private void initialEnemy()
@@ -600,7 +600,7 @@ public class MainActivity extends Activity
 		{
 			//move according to the trace
 			myPlane.moveToNext();
-
+/*
             double fx = 0, fy = 0, dax, day, dx, dy, dist,  maxdist, dmax, mag1;
 			Ball a=myPlane;
 			// friction
@@ -680,7 +680,7 @@ public class MainActivity extends Activity
 					myBulletPool.add(bu);
 				}
 			}
-
+*/
         }
 		private void dispear(ArrayList<Ball> balls, ArrayList<Ball> pool)
 		{
@@ -860,6 +860,7 @@ public class MainActivity extends Activity
 				Ball next=null;
 				float dis=0;
 				Ball pre=null;//myPlane;
+				double l=Math.sqrt((myPlane.vx * myPlane.vx) + (myPlane.vy * myPlane.vy)) * 30 / 1000 ;
 				//int i=0;
 				while (traceList.size()>0)//Ball b:traceList)
 				{
@@ -868,15 +869,19 @@ public class MainActivity extends Activity
 						pre=myPlane;
 					
 					dis += Math.sqrt((pre.x - b.x) * (pre.x - b.x) + (pre.y - b.y) * (pre.y - b.y));
-					if (dis<Math.sqrt((myPlane.vx * myPlane.vx) + (myPlane.vy * myPlane.vy)) * 30 / 1000 )
+					if (dis<l )
 					{
 						pre=b;
-						traceList.remove(b);
+						traceList.remove(0);
 						
 					}
 					else
 					{
-						next = b;
+						float nx=(float)((b.x-myPlane.x)*l/dis+myPlane.x);
+						float ny=(float)((b.y-myPlane.y)*l/dis+myPlane.y);
+						this.x=nx;
+						this.y=ny;
+					//	next = b;
 						break;
 					}
 				}
