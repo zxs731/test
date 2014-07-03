@@ -271,12 +271,22 @@ public class MainActivity extends Activity
 				eb.color2 = 4;
 				eb.vy = 10+ Math.random() * 30;
 				eb.vx = 10+ Math.random() * 30;
-				if (eb.radius >= 15 && eb.radius <= 21)
+				float rad=(float)Math.random()*30;
+				if (rad <= 10)
+				{
+					eb.radius=e20bmp.getWidth();
 					eb.skin=e20bmp;
-				else if (eb.radius > 21 && eb.radius <= 29)
+				}
+				else if (rad > 10 && rad <= 20)
+				{
+					eb.radius=e30bmp.getWidth();
 					eb.skin=e30bmp;
+				}
 				else 
+				{
+					eb.radius=e40bmp.getWidth();
 					eb.skin=e40bmp;
+				}
 				enemyPool.add(eb);
 			}
 		}
