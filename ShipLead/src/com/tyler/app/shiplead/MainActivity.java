@@ -350,7 +350,7 @@ public class MainActivity extends Activity
 			for (Ball tr:b.traceList)
 			{
 				paint.setColor(Color.BLUE);
-				paint.setAlpha(50);
+				paint.setAlpha(100);
 				tr.draw(canvas, paint);
 				paint.setAlpha(255);
 			}
@@ -768,6 +768,10 @@ public class MainActivity extends Activity
 						if(b.isInBall(x,y))
 						{
 							b.traceList.clear();
+							if(targets.containsKey(i))
+							{
+								targets.remove(i);
+							}
 							targets.put(i,b);
 							
 							break;
@@ -776,10 +780,12 @@ public class MainActivity extends Activity
 					break;
 					case(MotionEvent.ACTION_MOVE):
 					 Ball tar=targets.get(i);
-					 tar.AddNewTrace(x,y);
+					 if(tar!=null)
+					 	tar.AddNewTrace(x,y);
 					break;
 					case(MotionEvent.ACTION_UP):
-					targets.clear();
+					if(targets.containsKey(i))
+						targets.remove(i);
 					break;
 				}
 				
