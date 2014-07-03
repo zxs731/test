@@ -76,7 +76,13 @@ public class MainActivity extends Activity
 		getWindowManager().getDefaultDisplay().getMetrics(dm);
 		UtilityHelper.SCREEN_HEIGHT = dm.heightPixels; // 获取具体的屏幕分辨率数??
 		UtilityHelper.SCREEN_WIDTH = dm.widthPixels;
-
+		//prepare bmps
+		e20bmp = processBMP(R.drawable.enemy20); 
+		e30bmp = processBMP(R.drawable.enemy30);
+		e40bmp = processBMP(R.drawable.enemy40);
+		p56bmp = processBMP(R.drawable.p56);
+		myplaneBMPOri=p56bmp;
+		
 
         setContentView(R.layout.activity_android_ball_physics);
 
@@ -84,19 +90,6 @@ public class MainActivity extends Activity
         LayoutParams full = new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
         addContentView(physics, full);
         mainActivity = this;
-
-		//	BitmapFactory.Options opt = new BitmapFactory.Options();
-//		opt.inPreferredConfig = Config.ALPHA_8;
-		e20bmp = processBMP(R.drawable.enemy20); //BitmapFactory.decodeResource(getResources(), R.drawable.enemy20);  
-		e30bmp = processBMP(R.drawable.enemy30);
-
-
-
-//	e30bmp.eraseColor(Color.BLACK);
-		e40bmp = processBMP(R.drawable.enemy40);// BitmapFactory.decodeResource(getResources(), R.drawable.enemy40);
-		p56bmp = processBMP(R.drawable.p56);// BitmapFactory.decodeResource(getResources(), R.drawable.p56);
-		myplaneBMPOri=p56bmp;
-		//    p56bmp.eraseColor(Color.BLACK);
 
 
         //new thread
@@ -250,8 +243,8 @@ public class MainActivity extends Activity
 			enemyPool = new ArrayList<Ball>();
 			targets = new Hashtable<Integer,Ball>();
 			//    initalFuncBalls();
-			InitialMyPlane();
-			//	initialEnemy();
+		//	InitialMyPlane();
+				initialEnemy();
 
             timer = new Timer(30, this);
             timer.start();
@@ -273,11 +266,17 @@ public class MainActivity extends Activity
 			for (int i=0;i < 10;i++)
 			{
 				Ball eb=new Ball(Math.random() * UtilityHelper.SCREEN_WIDTH
-								 , 0, 15 + Math.random() * 20);
+								 , Math.random()* UtilityHelper.SCREEN_HEIGHT, 15 + Math.random() * 20);
 				eb.color1 = 6;
 				eb.color2 = 4;
-				eb.vy = Math.random() * 10;
-				eb.vx = 0;
+				eb.vy = 10+ Math.random() * 30;
+				eb.vx = 10+ Math.random() * 30;
+				if (eb.radius >= 15 && eb.radius <= 21)
+					eb.skin=e20bmp;
+				else if (eb.radius > 21 && eb.radius <= 29)
+					eb.skin=e30bmp;
+				else 
+					eb.skin=e40bmp;
 				enemyPool.add(eb);
 			}
 		}
@@ -348,12 +347,15 @@ public class MainActivity extends Activity
 		private void DrawEnemy(Ball myPlane, Canvas canvas)
 		{
 			Ball b=myPlane;
-			if (b.radius >= 15 && b.radius <= 21)
-				canvas.drawBitmap(e20bmp, b.x - e20bmp.getWidth() / 2, b.y - e20bmp.getHeight() / 2, paint);
-			else if (b.radius > 21 && b.radius <= 29)
-				canvas.drawBitmap(e30bmp, b.x - e30bmp.getWidth() / 2, b.y - e30bmp.getHeight() / 2, paint);
-			else 
-				canvas.drawBitmap(e40bmp, b.x - e40bmp.getWidth() / 2, b.y - e40bmp.getHeight() / 2, paint);
+			for (Ball tr:b.traceList)
+			{
+				paint.setColor(Color.BLUE);
+				paint.setAlpha(50);
+				tr.draw(canvas, paint);
+				paint.setAlpha(255);
+			}
+			b.DrawSkin(canvas,paint);
+			
 			//		rgbColor(colors[myPlane.color1]);
 			//		myPlane.draw(canvas, paint);
 			//	rgbColor(colors[myPlane.color2]);
@@ -361,6 +363,8 @@ public class MainActivity extends Activity
 		}
 		private void DrawMyplane(Ball myPlane, Canvas canvas)
 		{
+			if(myPlane==null)
+				return;
 			paint.setStyle(Paint.Style.STROKE);
 			for (Ball tr:myPlane.traceList)
 			{
@@ -428,8 +432,7 @@ public class MainActivity extends Activity
 				.replace("{2}", "" + tscore)
 				.replace("{3}", "" + enemyPool.size())
 				.replace("{4}", "" + eBulletPool.size())
-				.replace("{5}", "" + myBulletPool.size())
-				.replace("{6}", "" + myPlane.rotateAngle);	
+				.replace("{5}", "" + myBulletPool.size());
 			paint.setColor(Color.WHITE);
 			paint.setTextSize(30); 
 			canvas.drawText(gmsg, 5, 25, paint);	
@@ -489,13 +492,14 @@ public class MainActivity extends Activity
 			for (Ball a:enemyPool)
 			{
 				//bounds check
-				if (a.y > getHeight())
+				if (a.y > getHeight()||a.x>getWidth()||a.x<0||a.y<0)
 				{
-					a.y = 0;
+					a.y = (float)Math.random() * UtilityHelper.SCREEN_HEIGHT;
 					a.x = (float)Math.random() * UtilityHelper.SCREEN_WIDTH;
 
 					continue;
 				}	
+				/*
 				//撞毁
 				if (coarseCollision(a, myPlane))
 				{
@@ -507,7 +511,10 @@ public class MainActivity extends Activity
 					life -= 5;
 					continue;
 				}
-				//敌人移动
+				*/
+	a.moveToNext();
+	/*
+	//敌人移动
 				a.x += a.vx;
 				a.y += a.vy;
 				//发射
@@ -523,7 +530,7 @@ public class MainActivity extends Activity
 					ebu.vx =	(myPlane.x - ebu.x) / ((myPlane.y - ebu.y) / ebu.vy);
 					eBulletPool.add(ebu);
 				}
-
+*/
 
 			}
 			//	if (clear.size() > 0)
@@ -602,6 +609,8 @@ public class MainActivity extends Activity
 		}
 		private void myPlaneUpdate()
 		{
+			if(myPlane==null)
+				return;
 			//move according to the trace
 			myPlane.moveToNext();
 /*
@@ -748,9 +757,32 @@ public class MainActivity extends Activity
 
 			for (int i=0;i < touchcount;i++)
 			{
-				//处理功能区
 				float x=event.getX(i);
 				float y=event.getY(i);
+				
+				int action=event.getAction();
+				switch(action){
+					case(MotionEvent.ACTION_DOWN):
+					for(Ball b:enemyPool)
+					{
+						if(b.isInBall(x,y))
+						{
+							b.traceList.clear();
+							targets.put(i,b);
+							
+							break;
+						}
+					}
+					break;
+					case(MotionEvent.ACTION_MOVE):
+					 Ball tar=targets.get(i);
+					 tar.AddNewTrace(x,y);
+					break;
+					case(MotionEvent.ACTION_UP):
+					targets.clear();
+					break;
+				}
+				
 				/*
 				 if (processFunArea(x, y))
 				 {
@@ -766,25 +798,12 @@ public class MainActivity extends Activity
 					targets.put(i, myPlane);
 				}*/
 				//show the touch trace
-
+/*
 				Ball tar=myPlane;// targets.get(i);
 				if (tar != null)
 				{
 					ArrayList traceList=tar.traceList;
-					/*
-					if (traceList.size() >= 1)
-					{
-						Ball pre=tar.traceList.get(traceList.size() - 1);
-						if (pre.isInBall(x, y))
-						{
-							Ball b=new Ball(x, y, 5);
-							b.color1 = 0;
-							b.color2 = 1;
-							tar.traceList.add(b);
-						}
-					}
-					else
-					*/
+					
 					{
 						Ball b=new Ball(x, y, 5);
 						b.color1 = 0;
@@ -792,6 +811,7 @@ public class MainActivity extends Activity
 						tar.traceList.add(b);
 					}
 				}
+*/
 				/*
 				 myPlane.touchMove(x, y);
 				 if(!autoshot)
@@ -807,7 +827,7 @@ public class MainActivity extends Activity
             return true;
 
         }
-
+		
         public boolean coarseCollision(Ball a, Ball b)
         {
             return b.x - b.radius < a.x + a.radius && b.x + b.radius >= a.x - a.radius && b.y - b.radius < a.y + a.radius && b.y + b.radius >= a.y - a.radius;
@@ -865,6 +885,7 @@ public class MainActivity extends Activity
 				Ball next=null;
 				float dis=0;
 				Ball pre=null;//myPlane;
+				Ball myPlane=this;
 				double l=Math.sqrt((myPlane.vx * myPlane.vx) + (myPlane.vy * myPlane.vy)) * 30 / 1000 ;
 				//int i=0;
 				while (traceList.size()>0)//Ball b:traceList)
@@ -917,7 +938,7 @@ public class MainActivity extends Activity
 				//	this.y = next.y;
 				 float rad=(float)Math.atan2((-1)*(pre.x-next.x),pre.y-next.y);//.atan( (-1)*(pre.x-next.x)/(pre.y-next.y));
 				 rotateAngle=radToDegree(rad);
-				 p56bmp=rotateBitmap(myplaneBMPOri,rotateAngle);
+				 this.rotatedSkin=rotateBitmap(this.skin,rotateAngle);
 				}
 				
 			}
@@ -929,6 +950,31 @@ public class MainActivity extends Activity
 			public float radToDegree(float rad){
 
 				return (float) (180*rad/Math.PI);
+			}
+			public void AddNewTrace(float x,float y)
+			{
+				Ball b=new Ball(x, y, 5);
+				b.color1 = 0;
+				b.color2 = 1;
+				traceList.add(b);
+			}
+			public Bitmap skin;
+			private Bitmap rotatedSkin;
+			public void DrawSkin(Canvas canvas,Paint paint)
+			{
+				if(rotatedSkin==null)
+					rotatedSkin=skin;
+				if(rotatedSkin!=null)
+					canvas.drawBitmap(rotatedSkin, this.x - rotatedSkin.getWidth() / 2
+						, this.y - rotatedSkin.getHeight() / 2, paint);
+	/*			
+				if (b.radius >= 15 && b.radius <= 21)
+					canvas.drawBitmap(e20bmp, b.x - e20bmp.getWidth() / 2, b.y - e20bmp.getHeight() / 2, paint);
+				else if (b.radius > 21 && b.radius <= 29)
+					canvas.drawBitmap(e30bmp, b.x - e30bmp.getWidth() / 2, b.y - e30bmp.getHeight() / 2, paint);
+				else 
+					canvas.drawBitmap(e40bmp, b.x - e40bmp.getWidth() / 2, b.y - e40bmp.getHeight() / 2, paint);
+*/			
 			}
         }
 		private class MyPlane extends Ball
