@@ -81,8 +81,8 @@ public class MainActivity extends Activity
 		e30bmp = processBMP(R.drawable.enemy30);
 		e40bmp = processBMP(R.drawable.enemy40);
 		p56bmp = processBMP(R.drawable.p56);
-		myplaneBMPOri=p56bmp;
-		
+		myplaneBMPOri = p56bmp;
+
 
         setContentView(R.layout.activity_android_ball_physics);
 
@@ -243,8 +243,8 @@ public class MainActivity extends Activity
 			enemyPool = new ArrayList<Ball>();
 			targets = new Hashtable<Integer,Ball>();
 			//    initalFuncBalls();
-		//	InitialMyPlane();
-				initialEnemy();
+			//	InitialMyPlane();
+			initialEnemy();
 
             timer = new Timer(30, this);
             timer.start();
@@ -266,27 +266,30 @@ public class MainActivity extends Activity
 			for (int i=0;i < 10;i++)
 			{
 				Ball eb=new Ball(Math.random() * UtilityHelper.SCREEN_WIDTH
-								 , Math.random()* UtilityHelper.SCREEN_HEIGHT, 15 + Math.random() * 20);
+								 , Math.random() * UtilityHelper.SCREEN_HEIGHT, 15 + Math.random() * 20);
 				eb.color1 = 6;
 				eb.color2 = 4;
-				eb.vy = 10+ Math.random() * 30;
-				eb.vx = 10+ Math.random() * 30;
-				float rad=(float)Math.random()*30;
+				//	eb.vy = 10+ Math.random() * 30;
+				//	eb.vx = 10+ Math.random() * 30;
+				Ball a=eb;
+
+				float rad=(float)Math.random() * 30;
 				if (rad <= 10)
 				{
-					eb.radius=e20bmp.getWidth();
-					eb.skin=e20bmp;
+					eb.radius = e20bmp.getWidth();
+					eb.skin = e20bmp;
 				}
 				else if (rad > 10 && rad <= 20)
 				{
-					eb.radius=e30bmp.getWidth();
-					eb.skin=e30bmp;
+					eb.radius = e30bmp.getWidth();
+					eb.skin = e30bmp;
 				}
 				else 
 				{
-					eb.radius=e40bmp.getWidth();
-					eb.skin=e40bmp;
+					eb.radius = e40bmp.getWidth();
+					eb.skin = e40bmp;
 				}
+				rearrange(a);
 				enemyPool.add(eb);
 			}
 		}
@@ -364,8 +367,8 @@ public class MainActivity extends Activity
 				tr.draw(canvas, paint);
 				paint.setAlpha(255);
 			}
-			b.DrawSkin(canvas,paint);
-			
+			b.DrawSkin(canvas, paint);
+
 			//		rgbColor(colors[myPlane.color1]);
 			//		myPlane.draw(canvas, paint);
 			//	rgbColor(colors[myPlane.color2]);
@@ -373,7 +376,7 @@ public class MainActivity extends Activity
 		}
 		private void DrawMyplane(Ball myPlane, Canvas canvas)
 		{
-			if(myPlane==null)
+			if (myPlane == null)
 				return;
 			paint.setStyle(Paint.Style.STROKE);
 			for (Ball tr:myPlane.traceList)
@@ -437,12 +440,14 @@ public class MainActivity extends Activity
 			}
 
 			DrawMyplane(myPlane, canvas);
-			String gmsg="A={6}, Life={1}, Score={2}, E={3}, EB={4}, MB={5}";
+			String gmsg="VX={6},VY={7}, Life={1}, Score={2}, E={3}, EB={4}, MB={5}";
 			gmsg = gmsg.replace("{1}", "" + life)
 				.replace("{2}", "" + tscore)
 				.replace("{3}", "" + enemyPool.size())
 				.replace("{4}", "" + eBulletPool.size())
-				.replace("{5}", "" + myBulletPool.size());
+				.replace("{5}", "" + myBulletPool.size())
+				.replace("{6}", "" + enemyPool.get(0).vx)
+				.replace("{7}", "" + enemyPool.get(0).vy);
 			paint.setColor(Color.WHITE);
 			paint.setTextSize(30); 
 			canvas.drawText(gmsg, 5, 25, paint);	
@@ -502,45 +507,89 @@ public class MainActivity extends Activity
 			for (Ball a:enemyPool)
 			{
 				//bounds check
-				if (a.y > getHeight()||a.x>getWidth()||a.x<0||a.y<0)
+				if (a.y > getHeight() || a.x > getWidth() || a.x < 0 || a.y < 0)
 				{
-					a.y = (float)Math.random() * UtilityHelper.SCREEN_HEIGHT;
-					a.x = (float)Math.random() * UtilityHelper.SCREEN_WIDTH;
+					rearrange(a);
+					/*
+					 a.traceList.clear();
+					 int scenario = (int)(Math.random()*12);
+					 if(scenario<=3)
+					 {
+					 //从左边来
+					 a.x=0;
+					 a.y = (float)Math.random() * UtilityHelper.SCREEN_HEIGHT;
+					 a.vx=Math.random()*10+10;
+					 a.vy=0;
+					 a.RotateSkin(90);
+					 //	restartships(0, (float)Math.random() * UtilityHelper.SCREEN_HEIGHT
+
+					 }else if(scenario<=6)
+					 {
+					 //从上面来
+					 a.x = (float)Math.random() * UtilityHelper.SCREEN_WIDTH;
+					 a.y=0;
+					 a.vy=Math.random()*10+10;
+					 a.vx=0;
+					 a.RotateSkin(180);
+					 }else if(scenario<=9){
+					 //从下面来
+					 a.x = (float)Math.random() * UtilityHelper.SCREEN_WIDTH;
+					 a.y=UtilityHelper.SCREEN_HEIGHT;
+					 a.vy=(-1)*(Math.random()*10+10);
+					 a.vx=0;
+					 a.RotateSkin(0);
+					 }else{
+					 //从右面来
+					 a.x =UtilityHelper.SCREEN_WIDTH;
+					 a.y=(float)Math.random() * UtilityHelper.SCREEN_HEIGHT;
+					 a.vx=(-1)*(Math.random()*10+10);
+					 a.vy=0;
+					 a.RotateSkin(270);
+					 }
+					 */
+					//	a.y = (float)Math.random() * UtilityHelper.SCREEN_HEIGHT;
+					//	a.x = (float)Math.random() * UtilityHelper.SCREEN_WIDTH;
 
 					continue;
 				}	
 				/*
-				//撞毁
-				if (coarseCollision(a, myPlane))
+				 //撞毁
+				 if (coarseCollision(a, myPlane))
+				 {
+				 //	clear.add(a);
+				 crash = true;
+				 a.y = 0;
+				 a.x = (float)Math.random() * UtilityHelper.SCREEN_WIDTH;
+				 a.vy = Math.random() * 10;
+				 life -= 5;
+				 continue;
+				 }
+				 */
+				if (a.traceList.size() > 0)
+					a.moveToNext();
+				else
 				{
-					//	clear.add(a);
-					crash = true;
-					a.y = 0;
-					a.x = (float)Math.random() * UtilityHelper.SCREEN_WIDTH;
-					a.vy = Math.random() * 10;
-					life -= 5;
-					continue;
+					a.x += a.vx;
+					a.y += a.vy;
 				}
-				*/
-	a.moveToNext();
-	/*
-	//敌人移动
-				a.x += a.vx;
-				a.y += a.vy;
-				//发射
-				if (Math.random() * 100 > 97)
-				{
-					Ball ebu=new Ball(a.x, a.y, 8);
-					ebu.color1 = 6;
-					ebu.color2 = 5;
-			        if (myPlane.y < a.y)
-					    ebu.vy = (-1) * (a.vy + 20);
-					else
-						ebu.vy = a.vy + 20;
-					ebu.vx =	(myPlane.x - ebu.x) / ((myPlane.y - ebu.y) / ebu.vy);
-					eBulletPool.add(ebu);
-				}
-*/
+				/*
+				 //敌人移动
+				 a.x += a.vx;
+				 a.y += a.vy;
+				 //发射
+				 if (Math.random() * 100 > 97)
+				 {
+				 Ball ebu=new Ball(a.x, a.y, 8);
+				 ebu.color1 = 6;
+				 ebu.color2 = 5;
+				 if (myPlane.y < a.y)
+				 ebu.vy = (-1) * (a.vy + 20);
+				 else
+				 ebu.vy = a.vy + 20;
+				 ebu.vx =	(myPlane.x - ebu.x) / ((myPlane.y - ebu.y) / ebu.vy);
+				 eBulletPool.add(ebu);
+				 }
+				 */
 
 			}
 			//	if (clear.size() > 0)
@@ -550,6 +599,56 @@ public class MainActivity extends Activity
 				//震动
 				vibrate();
 			}
+		}
+		private void rearrange(Ball a)
+		{
+			a.traceList.clear();
+			int scenario = (int)(Math.random() * 12);
+			if (scenario <= 3)
+			{
+				//从左边来
+				a.x = 0;
+				a.y = (float)Math.random() * UtilityHelper.SCREEN_HEIGHT;
+				a.vx = Math.random() * 6 + 5;
+				a.vy = 0;
+				a.RotateSkin(90);
+				//	restartships(0, (float)Math.random() * UtilityHelper.SCREEN_HEIGHT
+
+			}
+			else if (scenario <= 6)
+			{
+				//从上面来
+				a.x = (float)Math.random() * UtilityHelper.SCREEN_WIDTH;
+				a.y = 0;
+				a.vy = Math.random() * 6 + 5;
+				a.vx = 0;
+				a.RotateSkin(180);
+			}
+			else if (scenario <= 9)
+			{
+				//从下面来
+				a.x = (float)Math.random() * UtilityHelper.SCREEN_WIDTH;
+				a.y = UtilityHelper.SCREEN_HEIGHT;
+				a.vy = (-1) * (Math.random() * 6 + 5);
+				a.vx = 0;
+				a.RotateSkin(0);
+			}
+			else
+			{
+				//从右面来
+				a.x = UtilityHelper.SCREEN_WIDTH;
+				a.y = (float)Math.random() * UtilityHelper.SCREEN_HEIGHT;
+				a.vx = (-1) * (Math.random() * 6 + 5);
+				a.vy = 0;
+				a.RotateSkin(270);
+			}
+		}
+		private void restartships(Ball b, float left, float right, float vx, float vy)
+		{
+			b.x = left;
+			b.y = right;
+			b.vx = vx;
+			b.vy = vy;
 		}
 		private void vibrate()
 		{
@@ -619,91 +718,91 @@ public class MainActivity extends Activity
 		}
 		private void myPlaneUpdate()
 		{
-			if(myPlane==null)
+			if (myPlane == null)
 				return;
 			//move according to the trace
 			myPlane.moveToNext();
-/*
-            double fx = 0, fy = 0, dax, day, dx, dy, dist,  maxdist, dmax, mag1;
-			Ball a=myPlane;
-			// friction
-			a.vx *= damping;
-			a.vy *= damping;
+			/*
+			 double fx = 0, fy = 0, dax, day, dx, dy, dist,  maxdist, dmax, mag1;
+			 Ball a=myPlane;
+			 // friction
+			 a.vx *= damping;
+			 a.vy *= damping;
 
-			// gravity
-			a.vx += gravity.x;
-			a.vy += gravity.y;
+			 // gravity
+			 a.vx += gravity.x;
+			 a.vy += gravity.y;
 
-			//bounds check
-			if (a.x < a.radius) a.x = a.radius;
-			if (a.y < a.radius) a.y = a.radius;
-			if (a.x > getWidth() - a.radius) a.x = getWidth() - a.radius;
-			if (a.y > getHeight() - a.radius)a.y = getHeight() - a.radius;
-
-
-			dax = (a.x + a.vx);
-			day = (a.y + a.vy);
-			fx = fy = 0;
-
-			for (Ball b : eBulletPool)
-			{
-				//issame = false;
-				if (a != b && coarseCollision(a, b))
-				{
+			 //bounds check
+			 if (a.x < a.radius) a.x = a.radius;
+			 if (a.y < a.radius) a.y = a.radius;
+			 if (a.x > getWidth() - a.radius) a.x = getWidth() - a.radius;
+			 if (a.y > getHeight() - a.radius)a.y = getHeight() - a.radius;
 
 
-					dx = dax - b.x;
-					dy = day - b.y;
+			 dax = (a.x + a.vx);
+			 day = (a.y + a.vy);
+			 fx = fy = 0;
 
-					dist = Math.sqrt(dx * dx + dy * dy);
-					maxdist = a.radius + b.radius;
-
-					dmax = (maxdist - dist);
-
-					if (dmax > 0)
-					{
-						//if they are same then dispear themself
-						if (startremove)
-						{
-							//issame = (a.color1 == b.color1 && a.color2 == b.color2);
-							//		issame = (a.color1 == b.color1) ;//&& a.color2 == b.color2);
+			 for (Ball b : eBulletPool)
+			 {
+			 //issame = false;
+			 if (a != b && coarseCollision(a, b))
+			 {
 
 
-							needremove.add(b);
-							//	needremove.add(a);
-							//	if (vibrator != null)
-							//		vibrator.vibrate(50);
-							break;
+			 dx = dax - b.x;
+			 dy = day - b.y;
 
-						}
-						mag1 = dmax * collisionDamping / maxdist;
-						fx += dx * mag1;
-						fy += dy * mag1;
-					}
+			 dist = Math.sqrt(dx * dx + dy * dy);
+			 maxdist = a.radius + b.radius;
 
-				}
-			}
+			 dmax = (maxdist - dist);
 
-			a.vx += fx;
-			a.vy += fy;
-
-			a.x += a.vx;
-			a.y += a.vy;
+			 if (dmax > 0)
+			 {
+			 //if they are same then dispear themself
+			 if (startremove)
+			 {
+			 //issame = (a.color1 == b.color1 && a.color2 == b.color2);
+			 //		issame = (a.color1 == b.color1) ;//&& a.color2 == b.color2);
 
 
-			if (startremove)
-				dispear(needremove, eBulletPool);
-			if (autoshot)
-			{
-				if (myPlane.vx != 0 || myPlane.vy != 0)
-				{
-					Ball bu=new Ball(myPlane.x, myPlane.y, 8);
-					bu.vx = myPlane.vx;
-					bu.vy = 40;
-					myBulletPool.add(bu);
-				}
-			}
-*/
+			 needremove.add(b);
+			 //	needremove.add(a);
+			 //	if (vibrator != null)
+			 //		vibrator.vibrate(50);
+			 break;
+
+			 }
+			 mag1 = dmax * collisionDamping / maxdist;
+			 fx += dx * mag1;
+			 fy += dy * mag1;
+			 }
+
+			 }
+			 }
+
+			 a.vx += fx;
+			 a.vy += fy;
+
+			 a.x += a.vx;
+			 a.y += a.vy;
+
+
+			 if (startremove)
+			 dispear(needremove, eBulletPool);
+			 if (autoshot)
+			 {
+			 if (myPlane.vx != 0 || myPlane.vy != 0)
+			 {
+			 Ball bu=new Ball(myPlane.x, myPlane.y, 8);
+			 bu.vx = myPlane.vx;
+			 bu.vy = 40;
+			 myBulletPool.add(bu);
+			 }
+			 }
+			 */
         }
 		private void dispear(ArrayList<Ball> balls, ArrayList<Ball> pool)
 		{
@@ -769,36 +868,37 @@ public class MainActivity extends Activity
 			{
 				float x=event.getX(i);
 				float y=event.getY(i);
-				
+
 				int action=event.getAction();
-				switch(action){
+				switch (action)
+				{
 					case(MotionEvent.ACTION_DOWN):
-					for(Ball b:enemyPool)
-					{
-						if(b.isInBall(x,y))
+						for (Ball b:enemyPool)
 						{
-							b.traceList.clear();
-							if(targets.containsKey(i))
+							if (b.isInBall(x, y))
 							{
-								targets.remove(i);
+								b.traceList.clear();
+								if (targets.containsKey(i))
+								{
+									targets.remove(i);
+								}
+								targets.put(i, b);
+
+								break;
 							}
-							targets.put(i,b);
-							
-							break;
 						}
-					}
-					break;
+						break;
 					case(MotionEvent.ACTION_MOVE):
-					 Ball tar=targets.get(i);
-					 if(tar!=null)
-					 	tar.AddNewTrace(x,y);
-					break;
+						Ball tar=targets.get(i);
+						if (tar != null)
+							tar.AddNewTrace(x, y);
+						break;
 					case(MotionEvent.ACTION_UP):
-					if(targets.containsKey(i))
-						targets.remove(i);
-					break;
+						if (targets.containsKey(i))
+							targets.remove(i);
+						break;
 				}
-				
+
 				/*
 				 if (processFunArea(x, y))
 				 {
@@ -810,24 +910,24 @@ public class MainActivity extends Activity
 				 */
 				//find which is in the target ship
 				/*if (myPlane.isInBall(x, y))
-				{
-					targets.put(i, myPlane);
-				}*/
+				 {
+				 targets.put(i, myPlane);
+				 }*/
 				//show the touch trace
-/*
-				Ball tar=myPlane;// targets.get(i);
-				if (tar != null)
-				{
-					ArrayList traceList=tar.traceList;
-					
-					{
-						Ball b=new Ball(x, y, 5);
-						b.color1 = 0;
-						b.color2 = 1;
-						tar.traceList.add(b);
-					}
-				}
-*/
+				/*
+				 Ball tar=myPlane;// targets.get(i);
+				 if (tar != null)
+				 {
+				 ArrayList traceList=tar.traceList;
+
+				 {
+				 Ball b=new Ball(x, y, 5);
+				 b.color1 = 0;
+				 b.color2 = 1;
+				 tar.traceList.add(b);
+				 }
+				 }
+				 */
 				/*
 				 myPlane.touchMove(x, y);
 				 if(!autoshot)
@@ -843,7 +943,7 @@ public class MainActivity extends Activity
             return true;
 
         }
-		
+
         public boolean coarseCollision(Ball a, Ball b)
         {
             return b.x - b.radius < a.x + a.radius && b.x + b.radius >= a.x - a.radius && b.y - b.radius < a.y + a.radius && b.y + b.radius >= a.y - a.radius;
@@ -902,72 +1002,82 @@ public class MainActivity extends Activity
 				float dis=0;
 				Ball pre=null;//myPlane;
 				Ball myPlane=this;
-				double l=Math.sqrt((myPlane.vx * myPlane.vx) + (myPlane.vy * myPlane.vy)) * 30 / 1000 ;
-				//int i=0;
-				while (traceList.size()>0)//Ball b:traceList)
+				double l=Math.sqrt((myPlane.vx * myPlane.vx) + (myPlane.vy * myPlane.vy));// * 30 / 1000 ;
+			    float startx=myPlane.x;
+				float starty=myPlane.y;
+			    //int i=0;
+				while (traceList.size() > 0)//Ball b:traceList)
 				{
 					Ball b=traceList.get(0);
-					if(pre==null)
-						pre=myPlane;
-					
+					if (pre == null)
+						pre = myPlane;
+
 					dis += Math.sqrt((pre.x - b.x) * (pre.x - b.x) + (pre.y - b.y) * (pre.y - b.y));
-					if (dis<l )
+					if (dis < l)
 					{
-						pre=b;
+						pre = b;
 						traceList.remove(0);
-						
+
 					}
 					else
 					{
-						float nx=(float)((b.x-myPlane.x)*l/dis+myPlane.x);
-						float ny=(float)((b.y-myPlane.y)*l/dis+myPlane.y);
-						this.x=nx;
-						this.y=ny;
+						//	float nx=(float)((b.x-myPlane.x)*l/dis+myPlane.x);
+						//	float ny=(float)((b.y-myPlane.y)*l/dis+myPlane.y);
+						float nx=(float)((b.x - startx) * l / dis + startx);
+						float ny=(float)((b.y - starty) * l / dis + starty);
+						this.x = nx;
+						this.y = ny;
+						this.vx = (nx - startx);
+						this.vy = (ny - starty);
 						next = b;
 						break;
 					}
 				}
 				/*
-				for (int i=0;i<traceList.size();i++)//Ball b:traceList)
-				{
-					//Ball b=traceList.get(i);
-					if (traceList.indexOf(b) > 0)
-					{
-						pre = traceList.get(traceList.indexOf(b) - 1);
-					}
-					dis += Math.sqrt((pre.x - b.x) * (pre.x - b.x) + (pre.y - b.y) * (pre.y - b.y));
-					if (dis<Math.sqrt((myPlane.vx * myPlane.vx) + (myPlane.vy * myPlane.vy)) * 30 / 1000 )
-					{
-						needClear.add(b);
-					}
-					else
-					{
-						next = b;
-						break;
-					}
-				}
-				*/
-				
+				 for (int i=0;i<traceList.size();i++)//Ball b:traceList)
+				 {
+				 //Ball b=traceList.get(i);
+				 if (traceList.indexOf(b) > 0)
+				 {
+				 pre = traceList.get(traceList.indexOf(b) - 1);
+				 }
+				 dis += Math.sqrt((pre.x - b.x) * (pre.x - b.x) + (pre.y - b.y) * (pre.y - b.y));
+				 if (dis<Math.sqrt((myPlane.vx * myPlane.vx) + (myPlane.vy * myPlane.vy)) * 30 / 1000 )
+				 {
+				 needClear.add(b);
+				 }
+				 else
+				 {
+				 next = b;
+				 break;
+				 }
+				 }
+				 */
+
 				if (next != null)
 				{
-				//	this.x = next.x;
-				//	this.y = next.y;
-				 float rad=(float)Math.atan2((-1)*(pre.x-next.x),pre.y-next.y);//.atan( (-1)*(pre.x-next.x)/(pre.y-next.y));
-				 rotateAngle=radToDegree(rad);
-				 this.rotatedSkin=rotateBitmap(this.skin,rotateAngle);
+					//	this.x = next.x;
+					//	this.y = next.y;
+					float rad=(float)Math.atan2((-1) * (pre.x - next.x), pre.y - next.y);//.atan( (-1)*(pre.x-next.x)/(pre.y-next.y));
+					rotateAngle = radToDegree(rad);
+
+					this.rotatedSkin = rotateBitmap(this.skin, rotateAngle);
 				}
-				
+
+
 			}
-			private Bitmap rotateBitmap(Bitmap bmp,float angle){
+			private Bitmap rotateBitmap(Bitmap bmp, float angle)
+			{
 				Matrix matrix=new Matrix();
 				matrix.setRotate(angle);
-				return Bitmap.createBitmap(bmp,0,0,bmp.getWidth(),bmp.getHeight(),matrix,false);
+				return Bitmap.createBitmap(bmp, 0, 0, bmp.getWidth(), bmp.getHeight(), matrix, false);
 			}
-			public float radToDegree(float rad){
+			public float radToDegree(float rad)
+			{
 
-				return (float) (180*rad/Math.PI);
+				return (float) (180 * rad / Math.PI);
 			}
-			public void AddNewTrace(float x,float y)
+			public void AddNewTrace(float x, float y)
 			{
 				Ball b=new Ball(x, y, 5);
 				b.color1 = 0;
@@ -976,21 +1086,25 @@ public class MainActivity extends Activity
 			}
 			public Bitmap skin;
 			private Bitmap rotatedSkin;
-			public void DrawSkin(Canvas canvas,Paint paint)
+			public void DrawSkin(Canvas canvas, Paint paint)
 			{
-				if(rotatedSkin==null)
-					rotatedSkin=skin;
-				if(rotatedSkin!=null)
+				if (rotatedSkin == null)
+					rotatedSkin = skin;
+				if (rotatedSkin != null)
 					canvas.drawBitmap(rotatedSkin, this.x - rotatedSkin.getWidth() / 2
-						, this.y - rotatedSkin.getHeight() / 2, paint);
-	/*			
-				if (b.radius >= 15 && b.radius <= 21)
-					canvas.drawBitmap(e20bmp, b.x - e20bmp.getWidth() / 2, b.y - e20bmp.getHeight() / 2, paint);
-				else if (b.radius > 21 && b.radius <= 29)
-					canvas.drawBitmap(e30bmp, b.x - e30bmp.getWidth() / 2, b.y - e30bmp.getHeight() / 2, paint);
-				else 
-					canvas.drawBitmap(e40bmp, b.x - e40bmp.getWidth() / 2, b.y - e40bmp.getHeight() / 2, paint);
-*/			
+									  , this.y - rotatedSkin.getHeight() / 2, paint);
+				/*			
+				 if (b.radius >= 15 && b.radius <= 21)
+				 canvas.drawBitmap(e20bmp, b.x - e20bmp.getWidth() / 2, b.y - e20bmp.getHeight() / 2, paint);
+				 else if (b.radius > 21 && b.radius <= 29)
+				 canvas.drawBitmap(e30bmp, b.x - e30bmp.getWidth() / 2, b.y - e30bmp.getHeight() / 2, paint);
+				 else 
+				 canvas.drawBitmap(e40bmp, b.x - e40bmp.getWidth() / 2, b.y - e40bmp.getHeight() / 2, paint);
+				 */			
+			}
+			public void RotateSkin(float angle)
+			{
+				this.rotatedSkin = rotateBitmap(this.skin, angle);
 			}
         }
 		private class MyPlane extends Ball
