@@ -167,6 +167,8 @@ public class MainActivity extends Activity
 		private ArrayList<Ball> myBulletPool;
 		private ArrayList<Ball> eBulletPool;
 		private ArrayList<Ball> traceBallPool;
+		private ArrayList<Ball> bonousPool;
+		private ArrayList<Ball> killersPool;
 		private Hashtable<Integer,Ball> targets;
 		private MyPlane myPlane;
         private int maxBalls = 400;
@@ -242,8 +244,11 @@ public class MainActivity extends Activity
 			eBulletPool = new ArrayList<Ball>();
 			enemyPool = new ArrayList<Ball>();
 			targets = new Hashtable<Integer,Ball>();
+			bonousPool = new ArrayList<Ball>();
+			killersPool = new ArrayList<Ball>();
 			//    initalFuncBalls();
 			//	InitialMyPlane();
+			initialBonus();
 			initialEnemy();
 
             timer = new Timer(30, this);
@@ -276,24 +281,35 @@ public class MainActivity extends Activity
 				float rad=(float)Math.random() * 30;
 				if (rad <= 10)
 				{
-					eb.radius = e20bmp.getWidth();
+					eb.radius = e20bmp.getWidth()/2;
 					eb.skin = e20bmp;
 				}
 				else if (rad > 10 && rad <= 20)
 				{
-					eb.radius = e30bmp.getWidth();
+					eb.radius = e30bmp.getWidth()/2;
 					eb.skin = e30bmp;
 				}
 				else 
 				{
-					eb.radius = e40bmp.getWidth();
+					eb.radius = e40bmp.getWidth()/2;
 					eb.skin = e40bmp;
 				}
 				rearrange(a);
 				enemyPool.add(eb);
 			}
 		}
-
+		private void initialBonus()
+		{
+			for (int i=0;i < 5;i++)
+			{
+				Ball b=new Ball(Math.random() * (UtilityHelper.SCREEN_WIDTH - 200) + 100
+								, Math.random() * (UtilityHelper.SCREEN_HEIGHT - 200) + 100
+								, Math.random() * 30 + 20);
+			    b.color1 = 2;
+				b.color2 = 3;
+				bonousPool.add(b);
+			}
+		}
 		private void initalFuncBalls()
 		{
 			functionBalls = new ArrayList<ClickBall>();
@@ -357,22 +373,37 @@ public class MainActivity extends Activity
 			//	rgbColor(colors[myPlane.color2]);
 			//canvas.drawCircle(myPlane.x, myPlane.y, (float)(myPlane.radius * Constants.oneByGoldenRatio), paint);
 		}
+		private void DrawTrace(Ball enemy, Canvas canvas)
+		{
+		  	for (Ball tr:enemy.traceList)
+			{
+				paint.setColor(Color.BLUE);
+				//	paint.setAlpha(100);
+				tr.draw(canvas, paint);
+				//	paint.setAlpha(255);
+			}
+		}
 		private void DrawEnemy(Ball myPlane, Canvas canvas)
 		{
 			Ball b=myPlane;
-			for (Ball tr:b.traceList)
-			{
-				paint.setColor(Color.BLUE);
-				paint.setAlpha(100);
-				tr.draw(canvas, paint);
-				paint.setAlpha(255);
-			}
+			//	DrawTrace(myPlane,canvas);
 			b.DrawSkin(canvas, paint);
 
 			//		rgbColor(colors[myPlane.color1]);
 			//		myPlane.draw(canvas, paint);
 			//	rgbColor(colors[myPlane.color2]);
 			//canvas.drawCircle(myPlane.x, myPlane.y, (float)(myPlane.radius * Constants.oneByGoldenRatio), paint);
+		}
+		private void DrawBonus(Canvas canvas)
+		{
+			for (Ball b:bonousPool)
+			{
+				//DrawBall(ball,canvas);
+				rgbColor(colors[b.color1]);
+				b.draw(canvas, paint);
+				rgbColor(colors[b.color2]);
+				canvas.drawCircle(b.x, b.y, (float)(b.radius * Constants.oneByGoldenRatio), paint);
+			}
 		}
 		private void DrawMyplane(Ball myPlane, Canvas canvas)
 		{
@@ -421,8 +452,13 @@ public class MainActivity extends Activity
         @Override
         protected void onDraw(Canvas canvas)
         {
+			DrawBonus(canvas);
 			paint.setStrokeWidth(3);
 			paint.setStyle(Paint.Style.STROKE);
+			for (Ball b:enemyPool)
+			{
+				DrawTrace(b, canvas);
+			}
 			for (Ball b:enemyPool)
 			{
 				//DrawBall(b, canvas);
@@ -440,14 +476,14 @@ public class MainActivity extends Activity
 			}
 
 			DrawMyplane(myPlane, canvas);
-			String gmsg="VX={6},VY={7}, Life={1}, Score={2}, E={3}, EB={4}, MB={5}";
+			String gmsg="Life={1}, Score={2}, E={3}, EB={4}, MB={5},VX={6},VY={7}";
 			gmsg = gmsg.replace("{1}", "" + life)
-				.replace("{2}", "" + tscore)
+				.replace("{2}", "" + score)
 				.replace("{3}", "" + enemyPool.size())
 				.replace("{4}", "" + eBulletPool.size())
 				.replace("{5}", "" + myBulletPool.size())
-				.replace("{6}", "" + enemyPool.get(0).vx)
-				.replace("{7}", "" + enemyPool.get(0).vy);
+				.replace("{6}", "" + 0) //enemyPool.get(0).vx)
+				.replace("{7}", "" + 0);
 			paint.setColor(Color.WHITE);
 			paint.setTextSize(30); 
 			canvas.drawText(gmsg, 5, 25, paint);	
@@ -462,6 +498,7 @@ public class MainActivity extends Activity
 			//	boolean issame;
 			//	if (startremove)
 			//    	needremove.clear();
+			bonusUpdate();
 			myPlaneUpdate();
 			myBulletUpdate();
 			enemyUpdate();
@@ -642,6 +679,26 @@ public class MainActivity extends Activity
 				a.vy = 0;
 				a.RotateSkin(270);
 			}
+		}
+		private void bonusUpdate()
+		{
+			for (Ball b:bonousPool)
+			{
+				b.change();
+				for(Ball ship:enemyPool)
+				{
+					if(coarseCollision(b,ship)){
+						changeRadPlace(b);
+						score+=10;
+					}
+				}
+			}
+		}
+		private void changeRadPlace(Ball bonus){
+			bonus.x=(float)(Math.random()*(UtilityHelper.SCREEN_WIDTH-200)+100);
+			bonus.y=(float)(Math.random()*(UtilityHelper.SCREEN_HEIGHT-200)+100);
+			bonus.radius=1;
+			
 		}
 		private void restartships(Ball b, float left, float right, float vx, float vy)
 		{
@@ -993,6 +1050,16 @@ public class MainActivity extends Activity
 			{
 				return radius > Math.sqrt((this.x - x) * (this.x - x) + (this.y - y) * (this.y - y));
 			}
+			private int increase=-1;
+			public void change(){
+				if (this.radius >= 40)
+					increase=-1;
+				else if (this.radius <= 10)
+				{
+					increase=1;
+				}
+				this.radius+=increase*1;
+			}
 			public ArrayList<Ball> traceList;
 			public float rotateAngle;
 			public void moveToNext()
@@ -1001,6 +1068,7 @@ public class MainActivity extends Activity
 				Ball next=null;
 				float dis=0;
 				Ball pre=null;//myPlane;
+				Ball pre2=null;
 				Ball myPlane=this;
 				double l=Math.sqrt((myPlane.vx * myPlane.vx) + (myPlane.vy * myPlane.vy));// * 30 / 1000 ;
 			    float startx=myPlane.x;
@@ -1015,6 +1083,7 @@ public class MainActivity extends Activity
 					dis += Math.sqrt((pre.x - b.x) * (pre.x - b.x) + (pre.y - b.y) * (pre.y - b.y));
 					if (dis < l)
 					{
+						pre2 = pre;
 						pre = b;
 						traceList.remove(0);
 
@@ -1023,12 +1092,7 @@ public class MainActivity extends Activity
 					{
 						//	float nx=(float)((b.x-myPlane.x)*l/dis+myPlane.x);
 						//	float ny=(float)((b.y-myPlane.y)*l/dis+myPlane.y);
-						float nx=(float)((b.x - startx) * l / dis + startx);
-						float ny=(float)((b.y - starty) * l / dis + starty);
-						this.x = nx;
-						this.y = ny;
-						this.vx = (nx - startx);
-						this.vy = (ny - starty);
+
 						next = b;
 						break;
 					}
@@ -1060,8 +1124,51 @@ public class MainActivity extends Activity
 					//	this.y = next.y;
 					float rad=(float)Math.atan2((-1) * (pre.x - next.x), pre.y - next.y);//.atan( (-1)*(pre.x-next.x)/(pre.y-next.y));
 					rotateAngle = radToDegree(rad);
-
 					this.rotatedSkin = rotateBitmap(this.skin, rotateAngle);
+					/*
+					 //reset x,y vx,vy
+					 double lastpart=Math.sqrt((next.x-pre.x)*(next.x-pre.x)+(next.y-pre.y)*(next.y-pre.y));
+					 double adddis=lastpart-( dis-l);
+					 this.x=(float)( Math.sin(rad)*adddis)+pre.x;
+					 this.y=(float)( Math.cos(rad)*adddis)+pre.y;
+					 this.vx=l*Math.sin(rad);
+					 this.vy=l*Math.cos(rad);
+					 */
+
+					float nx=(float)((next.x - startx) * l / dis + startx);
+					float ny=(float)((next.y - starty) * l / dis + starty);
+					this.x = nx;
+					this.y = ny;
+					float k=(float)Math.sqrt((l * l) / ((nx - startx) * (nx - startx) + (ny - starty) * (ny - starty)));
+					this.vx = (nx - startx) * k;
+					this.vy = (ny - starty) * k;
+
+
+				}
+				else if (dis < l && pre != null)
+				{
+					//没有超过最小距离，则按最后一个轨迹点的方向前进
+
+					float nx=(float)((pre.x - startx) * l / dis + startx);
+					float ny=(float)((pre.y - starty) * l / dis + starty);
+					this.x = nx;
+					this.y = ny;
+					float k=(float)Math.sqrt((l * l) / ((nx - startx) * (nx - startx) + (ny - starty) * (ny - starty)));
+					this.vx = (nx - startx) * k;
+					this.vy = (ny - starty) * k;
+
+					/*
+					 float rad=(float)Math.atan2((-1) * (pre2.x - pre.x), pre2.y - pre.y);//.atan( (-1)*(pre.x-next.x)/(pre.y-next.y));
+					 rotateAngle = radToDegree(rad);
+					 this.rotatedSkin = rotateBitmap(this.skin, rotateAngle);
+					 //reset x,y vx,vy
+					 //	double lastpart=Math.sqrt((next.x-pre.x)*(next.x-pre.x)+(next.y-pre.y)*(next.y-pre.y));
+					 double adddis=l-dis;
+					 this.x=(float)( Math.sin(rad)*adddis)+pre.x;
+					 this.y=(float)( Math.cos(rad)*adddis)+pre.y;
+					 this.vx=l*Math.sin(rad);
+					 this.vy=l*Math.cos(rad);
+					 */
 				}
 
 
