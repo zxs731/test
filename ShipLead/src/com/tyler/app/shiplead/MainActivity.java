@@ -81,6 +81,7 @@ public class MainActivity extends Activity
 		e30bmp = processBMP(R.drawable.enemy30);
 		e40bmp = processBMP(R.drawable.enemy40);
 		p56bmp = processBMP(R.drawable.p56);
+
 		myplaneBMPOri = p56bmp;
 
 
@@ -268,7 +269,7 @@ public class MainActivity extends Activity
 		}
 		private void initialEnemy()
 		{
-			for (int i=0;i < 10;i++)
+			for (int i=0;i < 5;i++)
 			{
 				Ball eb=new Ball(Math.random() * UtilityHelper.SCREEN_WIDTH
 								 , Math.random() * UtilityHelper.SCREEN_HEIGHT, 15 + Math.random() * 20);
@@ -281,17 +282,17 @@ public class MainActivity extends Activity
 				float rad=(float)Math.random() * 30;
 				if (rad <= 10)
 				{
-					eb.radius = e20bmp.getWidth()/2;
+					eb.radius = e20bmp.getWidth() / 2;
 					eb.skin = e20bmp;
 				}
 				else if (rad > 10 && rad <= 20)
 				{
-					eb.radius = e30bmp.getWidth()/2;
+					eb.radius = e30bmp.getWidth() / 2;
 					eb.skin = e30bmp;
 				}
 				else 
 				{
-					eb.radius = e40bmp.getWidth()/2;
+					eb.radius = e40bmp.getWidth() / 2;
 					eb.skin = e40bmp;
 				}
 				rearrange(a);
@@ -300,13 +301,35 @@ public class MainActivity extends Activity
 		}
 		private void initialBonus()
 		{
-			for (int i=0;i < 5;i++)
+			for (int i=0;i < 3;i++)
 			{
 				Ball b=new Ball(Math.random() * (UtilityHelper.SCREEN_WIDTH - 200) + 100
 								, Math.random() * (UtilityHelper.SCREEN_HEIGHT - 200) + 100
 								, Math.random() * 30 + 20);
 			    b.color1 = 2;
 				b.color2 = 3;
+				//bmp skin
+				Bitmap bmpSkin=processBMP(R.drawable.unkown);
+				switch (i)
+				{
+					case(0):
+					//	bmpSkin = processBMP(R.drawable.bonusbox);
+						break;
+					case(1):
+					//	bmpSkin = processBMP(R.drawable.bonus2);
+						break;
+					case(2):
+						bmpSkin = processBMP(R.drawable.bomb);
+						break;
+					case(3):
+				//		bmpSkin = processBMP(R.drawable.killer);
+						break;
+					case(4):
+						bmpSkin = processBMP(R.drawable.unkown);
+						break;
+				}
+				b.radius = bmpSkin.getWidth() / 2;
+				b.skin = bmpSkin;
 				bonousPool.add(b);
 			}
 		}
@@ -398,11 +421,15 @@ public class MainActivity extends Activity
 		{
 			for (Ball b:bonousPool)
 			{
+				b.DrawSkin(canvas, paint);
+			//	DrawBall(b,canvas);
 				//DrawBall(ball,canvas);
-				rgbColor(colors[b.color1]);
-				b.draw(canvas, paint);
-				rgbColor(colors[b.color2]);
-				canvas.drawCircle(b.x, b.y, (float)(b.radius * Constants.oneByGoldenRatio), paint);
+				/*
+				 rgbColor(colors[b.color1]);
+				 b.draw(canvas, paint);
+				 rgbColor(colors[b.color2]);
+				 canvas.drawCircle(b.x, b.y, (float)(b.radius * Constants.oneByGoldenRatio), paint);
+				 */
 			}
 		}
 		private void DrawMyplane(Ball myPlane, Canvas canvas)
@@ -685,20 +712,22 @@ public class MainActivity extends Activity
 			for (Ball b:bonousPool)
 			{
 				b.change();
-				for(Ball ship:enemyPool)
+				for (Ball ship:enemyPool)
 				{
-					if(coarseCollision(b,ship)){
+					if (coarseCollision(b, ship))
+					{
 						changeRadPlace(b);
-						score+=10;
+						score += 10;
 					}
 				}
 			}
 		}
-		private void changeRadPlace(Ball bonus){
-			bonus.x=(float)(Math.random()*(UtilityHelper.SCREEN_WIDTH-200)+100);
-			bonus.y=(float)(Math.random()*(UtilityHelper.SCREEN_HEIGHT-200)+100);
-			bonus.radius=1;
-			
+		private void changeRadPlace(Ball bonus)
+		{
+			bonus.x = (float)(Math.random() * (UtilityHelper.SCREEN_WIDTH - 200) + 100);
+			bonus.y = (float)(Math.random() * (UtilityHelper.SCREEN_HEIGHT - 200) + 100);
+		//	bonus.radius = 1;
+
 		}
 		private void restartships(Ball b, float left, float right, float vx, float vy)
 		{
@@ -1051,14 +1080,37 @@ public class MainActivity extends Activity
 				return radius > Math.sqrt((this.x - x) * (this.x - x) + (this.y - y) * (this.y - y));
 			}
 			private int increase=-1;
-			public void change(){
-				if (this.radius >= 40)
-					increase=-1;
-				else if (this.radius <= 10)
+			private float scale=1;
+			public void change()
+			{
+/*
+				if (skin != null)
 				{
-					increase=1;
+					int skinWidth=skin.getWidth();
+					if (this.radius >= skinWidth)
+						increase = -1;
+					else if (this.radius <= 10)
+					{
+						increase = 1;
+					}
+					//	this.radius += increase * 1;
+					scale += (float)increase / 10;
+
+					int scaleWidth=(int) (scale * skinWidth);   
+					if (scaleWidth <= 0)
+					{
+						radius = 3;
+					}
+					else
+					{
+
+						Matrix matrix = new Matrix();  
+						matrix.postScale(scale, scale);  
+						Bitmap rotatedSkin = Bitmap.createBitmap(skin, 0, 0, (int)(skinWidth * scale), (int)(skinWidth * scale), matrix, true);   
+						this.radius = rotatedSkin.getWidth() / 2;
+					}
 				}
-				this.radius+=increase*1;
+*/
 			}
 			public ArrayList<Ball> traceList;
 			public float rotateAngle;
