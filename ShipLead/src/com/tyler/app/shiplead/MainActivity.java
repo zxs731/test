@@ -301,7 +301,7 @@ public class MainActivity extends Activity
 		}
 		private void initialBonus()
 		{
-			for (int i=0;i < 3;i++)
+			for (int i=0;i < 5;i++)
 			{
 				Ball b=new Ball(Math.random() * (UtilityHelper.SCREEN_WIDTH - 200) + 100
 								, Math.random() * (UtilityHelper.SCREEN_HEIGHT - 200) + 100
@@ -309,29 +309,36 @@ public class MainActivity extends Activity
 			    b.color1 = 2;
 				b.color2 = 3;
 				//bmp skin
-				Bitmap bmpSkin=processBMP(R.drawable.unkown);
+				Bitmap bmpSkin=scaleBMP( processBMP(R.drawable.unkown),0.35f);
 				switch (i)
 				{
 					case(0):
-					//	bmpSkin = processBMP(R.drawable.bonusbox);
+						bmpSkin =scaleBMP( processBMP(R.drawable.bonusbox),0.25f);
 						break;
 					case(1):
-					//	bmpSkin = processBMP(R.drawable.bonus2);
+						bmpSkin =scaleBMP( processBMP(R.drawable.bonus2),0.25f);
 						break;
 					case(2):
-						bmpSkin = processBMP(R.drawable.bomb);
+						bmpSkin = scaleBMP( processBMP(R.drawable.bomb),0.25f);
 						break;
 					case(3):
-				//		bmpSkin = processBMP(R.drawable.killer);
+						bmpSkin =scaleBMP( processBMP(R.drawable.killer),0.25f);
 						break;
-					case(4):
-						bmpSkin = processBMP(R.drawable.unkown);
-						break;
+					
 				}
 				b.radius = bmpSkin.getWidth() / 2;
 				b.skin = bmpSkin;
 				bonousPool.add(b);
 			}
+		}
+		private Bitmap scaleBMP(Bitmap bmp,float scale){
+
+			Matrix matrix = new Matrix();  
+			matrix.postScale(scale, scale);  
+			int chgWidth=(int)(bmp.getWidth());//*scale);
+			
+			Bitmap chgBmp = Bitmap.createBitmap(bmp, 0, 0, chgWidth, chgWidth, matrix, true);   
+			return chgBmp;
 		}
 		private void initalFuncBalls()
 		{
@@ -422,6 +429,7 @@ public class MainActivity extends Activity
 			for (Ball b:bonousPool)
 			{
 				b.DrawSkin(canvas, paint);
+			//	paint.setStyle(Paint.Style.STROKE);
 			//	DrawBall(b,canvas);
 				//DrawBall(ball,canvas);
 				/*
@@ -1083,34 +1091,35 @@ public class MainActivity extends Activity
 			private float scale=1;
 			public void change()
 			{
-/*
+
 				if (skin != null)
 				{
 					int skinWidth=skin.getWidth();
-					if (this.radius >= skinWidth)
+					if (scale>=1)
 						increase = -1;
-					else if (this.radius <= 10)
+					else if (scale <= 0.8)
 					{
 						increase = 1;
 					}
 					//	this.radius += increase * 1;
-					scale += (float)increase / 10;
-
+					scale += (float)increase / 50;
+/*
 					int scaleWidth=(int) (scale * skinWidth);   
 					if (scaleWidth <= 0)
 					{
 						radius = 3;
 					}
 					else
+					*/
 					{
 
 						Matrix matrix = new Matrix();  
 						matrix.postScale(scale, scale);  
-						Bitmap rotatedSkin = Bitmap.createBitmap(skin, 0, 0, (int)(skinWidth * scale), (int)(skinWidth * scale), matrix, true);   
+						rotatedSkin = Bitmap.createBitmap(skin, 0, 0,skinWidth , skinWidth, matrix, true);   
 						this.radius = rotatedSkin.getWidth() / 2;
 					}
 				}
-*/
+
 			}
 			public ArrayList<Ball> traceList;
 			public float rotateAngle;
