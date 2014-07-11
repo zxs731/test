@@ -253,7 +253,7 @@ public class MainActivity extends Activity
 			initialBonus();
 			initialEnemy();
 
-            timer = new Timer(30, this);
+            timer = new Timer(20, this);
             timer.start();
 
         }
@@ -270,7 +270,7 @@ public class MainActivity extends Activity
 		}
 		private void initialEnemy()
 		{
-			for (int i=0;i < 5;i++)
+			for (int i=0;i < 10;i++)
 			{
 				Ball eb=new Ball(Math.random() * UtilityHelper.SCREEN_WIDTH
 								 , Math.random() * UtilityHelper.SCREEN_HEIGHT, 15 + Math.random() * 20);
@@ -408,7 +408,7 @@ public class MainActivity extends Activity
 		{
 		  	for (Ball tr:enemy.traceList)
 			{
-				paint.setColor(Color.BLUE);
+				paint.setColor(Color.RED);
 				//	paint.setAlpha(100);
 				tr.draw(canvas, paint);
 				//	paint.setAlpha(255);
@@ -490,7 +490,8 @@ public class MainActivity extends Activity
         {
 			DrawBonus(canvas);
 			paint.setStrokeWidth(3);
-			paint.setStyle(Paint.Style.STROKE);
+		//	paint.setStyle(Paint.Style.STROKE);
+			paint.setStyle(Paint.Style.FILL);	
 			for (Ball b:enemyPool)
 			{
 				DrawTrace(b, canvas);
@@ -501,7 +502,7 @@ public class MainActivity extends Activity
 
 				DrawEnemy(b, canvas);
 			}
-			paint.setStyle(Paint.Style.FILL);
+		
 			for (Ball eb:eBulletPool)
 			{
 				DrawBall(eb, canvas);
