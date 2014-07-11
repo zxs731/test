@@ -89,7 +89,8 @@ public class MainActivity extends Activity
 
 		physics = new BallPhysics(this);
         LayoutParams full = new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
-        addContentView(physics, full);
+        physics.setBackgroundDrawable(getResources().getDrawable(R.drawable.sea1));
+		addContentView(physics, full);
         mainActivity = this;
 
 
