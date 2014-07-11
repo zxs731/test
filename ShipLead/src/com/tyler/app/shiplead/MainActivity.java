@@ -406,13 +406,28 @@ public class MainActivity extends Activity
 		}
 		private void DrawTrace(Ball enemy, Canvas canvas)
 		{
+			/*
 		  	for (Ball tr:enemy.traceList)
 			{
+				
 				paint.setColor(Color.RED);
 				//	paint.setAlpha(100);
 				tr.draw(canvas, paint);
 				//	paint.setAlpha(255);
 			}
+			*/
+			paint.setStyle(Paint.Style.STROKE);
+			paint.setStrokeWidth(10);
+			paint.setColor(Color.RED);
+			paint.setAlpha(100);
+			for(int i=0;i<enemy.traceList.size()-1;i++){
+				Ball b2=enemy.traceList.get(i+1);
+				Ball b1=enemy.traceList.get(i);
+				
+				canvas.drawLine(b1.x,b1.y,b2.x,b2.y,paint);
+			}
+			paint.setAlpha(255);
+			paint.setStrokeWidth(5);
 		}
 		private void DrawEnemy(Ball myPlane, Canvas canvas)
 		{
@@ -490,8 +505,8 @@ public class MainActivity extends Activity
         {
 			DrawBonus(canvas);
 			paint.setStrokeWidth(3);
-		//	paint.setStyle(Paint.Style.STROKE);
-			paint.setStyle(Paint.Style.FILL);	
+			paint.setStyle(Paint.Style.STROKE);
+		//	paint.setStyle(Paint.Style.FILL);	
 			for (Ball b:enemyPool)
 			{
 				DrawTrace(b, canvas);
