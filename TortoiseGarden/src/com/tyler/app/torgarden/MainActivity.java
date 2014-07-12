@@ -77,7 +77,7 @@ public class MainActivity extends Activity
 		UtilityHelper.SCREEN_HEIGHT = dm.heightPixels; // 获取具体的屏幕分辨率数??
 		UtilityHelper.SCREEN_WIDTH = dm.widthPixels;
 		//prepare bmps
-		e20bmp = processBMP(R.drawable.tor20); 
+		e20bmp = processBMP(R.drawable.tor40); 
 		e30bmp = processBMP(R.drawable.tor40);
 		e40bmp = processBMP(R.drawable.tor60);
 		p56bmp = processBMP(R.drawable.p56);
@@ -253,7 +253,7 @@ public class MainActivity extends Activity
 			initialBonus();
 			initialEnemy();
 
-            timer = new Timer(20, this);
+            timer = new Timer(30, this);
             timer.start();
 
         }
@@ -698,7 +698,7 @@ public class MainActivity extends Activity
 				//从左边来
 				a.x = 0;
 				a.y = (float)Math.random() * UtilityHelper.SCREEN_HEIGHT;
-				a.vx = Math.random() * 6 + 5;
+				a.vx = Math.random() * 4 + 1;
 				a.vy = 0;
 				a.RotateSkin(90);
 				//	restartships(0, (float)Math.random() * UtilityHelper.SCREEN_HEIGHT
@@ -709,7 +709,7 @@ public class MainActivity extends Activity
 				//从上面来
 				a.x = (float)Math.random() * UtilityHelper.SCREEN_WIDTH;
 				a.y = 0;
-				a.vy = Math.random() * 6 + 5;
+				a.vy = Math.random() * 4 + 1;
 				a.vx = 0;
 				a.RotateSkin(180);
 			}
@@ -718,7 +718,7 @@ public class MainActivity extends Activity
 				//从下面来
 				a.x = (float)Math.random() * UtilityHelper.SCREEN_WIDTH;
 				a.y = UtilityHelper.SCREEN_HEIGHT;
-				a.vy = (-1) * (Math.random() * 6 + 5);
+				a.vy = (-1) * (Math.random() *4  + 1);
 				a.vx = 0;
 				a.RotateSkin(0);
 			}
@@ -727,7 +727,7 @@ public class MainActivity extends Activity
 				//从右面来
 				a.x = UtilityHelper.SCREEN_WIDTH;
 				a.y = (float)Math.random() * UtilityHelper.SCREEN_HEIGHT;
-				a.vx = (-1) * (Math.random() * 6 + 5);
+				a.vx = (-1) * (Math.random() * 4 + 1);
 				a.vy = 0;
 				a.RotateSkin(270);
 			}
