@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">螃蟹家园</string>
+    <string name="action_settings">Settings</string>
+    <string name="timekeeping">总分：{1}  用时{0}秒   消除：{2} 球数：{3}【{4}】</string>
+
+</resources>
