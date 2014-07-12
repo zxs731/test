@@ -77,9 +77,9 @@ public class MainActivity extends Activity
 		UtilityHelper.SCREEN_HEIGHT = dm.heightPixels; // 获取具体的屏幕分辨率数??
 		UtilityHelper.SCREEN_WIDTH = dm.widthPixels;
 		//prepare bmps
-		e20bmp = processBMP(R.drawable.tor40); 
-		e30bmp = processBMP(R.drawable.tor60);
-		e40bmp = processBMP(R.drawable.tor80);
+		e20bmp = processBMP(R.drawable.tor20); 
+		e30bmp = processBMP(R.drawable.tor40);
+		e40bmp = processBMP(R.drawable.tor60);
 		p56bmp = processBMP(R.drawable.p56);
 
 		myplaneBMPOri = p56bmp;
