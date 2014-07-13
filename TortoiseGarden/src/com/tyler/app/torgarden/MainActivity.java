@@ -296,7 +296,8 @@ public class MainActivity extends Activity
 					eb.radius = e40bmp.getWidth() / 2;
 					eb.skin = e40bmp;
 				}
-				rearrange(a);
+				rearrange(eb);
+
 				enemyPool.add(eb);
 			}
 		}
@@ -310,34 +311,35 @@ public class MainActivity extends Activity
 			    b.color1 = 2;
 				b.color2 = 3;
 				//bmp skin
-				Bitmap bmpSkin=scaleBMP( processBMP(R.drawable.unkown),0.35f);
+				Bitmap bmpSkin=scaleBMP(processBMP(R.drawable.unkown), 0.35f);
 				switch (i)
 				{
 					case(0):
-						bmpSkin =scaleBMP( processBMP(R.drawable.bonusbox),0.25f);
+						bmpSkin = scaleBMP(processBMP(R.drawable.bonusbox), 0.25f);
 						break;
 					case(1):
-						bmpSkin =scaleBMP( processBMP(R.drawable.bonus2),0.25f);
+						bmpSkin = scaleBMP(processBMP(R.drawable.bonus2), 0.25f);
 						break;
 					case(2):
-						bmpSkin = scaleBMP( processBMP(R.drawable.bomb),0.25f);
+						bmpSkin = scaleBMP(processBMP(R.drawable.bomb), 0.25f);
 						break;
 					case(3):
-						bmpSkin =scaleBMP( processBMP(R.drawable.killer),0.25f);
+						bmpSkin = scaleBMP(processBMP(R.drawable.killer), 0.25f);
 						break;
-					
+
 				}
 				b.radius = bmpSkin.getWidth() / 2;
 				b.skin = bmpSkin;
 				bonousPool.add(b);
 			}
 		}
-		private Bitmap scaleBMP(Bitmap bmp,float scale){
+		private Bitmap scaleBMP(Bitmap bmp, float scale)
+		{
 
 			Matrix matrix = new Matrix();  
 			matrix.postScale(scale, scale);  
 			int chgWidth=(int)(bmp.getWidth());//*scale);
-			
+
 			Bitmap chgBmp = Bitmap.createBitmap(bmp, 0, 0, chgWidth, chgWidth, matrix, true);   
 			return chgBmp;
 		}
@@ -407,24 +409,25 @@ public class MainActivity extends Activity
 		private void DrawTrace(Ball enemy, Canvas canvas)
 		{
 			/*
-		  	for (Ball tr:enemy.traceList)
-			{
-				
-				paint.setColor(Color.RED);
-				//	paint.setAlpha(100);
-				tr.draw(canvas, paint);
-				//	paint.setAlpha(255);
-			}
-			*/
+			 for (Ball tr:enemy.traceList)
+			 {
+
+			 paint.setColor(Color.RED);
+			 //	paint.setAlpha(100);
+			 tr.draw(canvas, paint);
+			 //	paint.setAlpha(255);
+			 }
+			 */
 			paint.setStyle(Paint.Style.STROKE);
 			paint.setStrokeWidth(10);
 			paint.setColor(Color.BLUE);
 			paint.setAlpha(100);
-			for(int i=0;i<enemy.traceList.size()-1;i++){
-				Ball b2=enemy.traceList.get(i+1);
+			for (int i=0;i < enemy.traceList.size() - 1;i++)
+			{
+				Ball b2=enemy.traceList.get(i + 1);
 				Ball b1=enemy.traceList.get(i);
-				
-				canvas.drawLine(b1.x,b1.y,b2.x,b2.y,paint);
+
+				canvas.drawLine(b1.x, b1.y, b2.x, b2.y, paint);
 			}
 			paint.setAlpha(255);
 			paint.setStrokeWidth(5);
@@ -445,8 +448,8 @@ public class MainActivity extends Activity
 			for (Ball b:bonousPool)
 			{
 				b.DrawSkin(canvas, paint);
-			//	paint.setStyle(Paint.Style.STROKE);
-			//	DrawBall(b,canvas);
+				//	paint.setStyle(Paint.Style.STROKE);
+				//	DrawBall(b,canvas);
 				//DrawBall(ball,canvas);
 				/*
 				 rgbColor(colors[b.color1]);
@@ -500,24 +503,37 @@ public class MainActivity extends Activity
 			 canvas.drawRect(rx, ry, rx + rwidth, ry + rheight, paint);	
 			 */
 		}
+		private void DrawFootTraces(Ball ball, Canvas canvas)
+		{
+			paint.setColor(Color.WHITE);
+			paint.setAlpha(80);
+			for (FootTrace ft:ball.FootTraces)
+			{
+				ft.draw(canvas, paint);
+			}
+			paint.setAlpha(255);
+		}
         @Override
         protected void onDraw(Canvas canvas)
         {
 			DrawBonus(canvas);
 			paint.setStrokeWidth(3);
 			paint.setStyle(Paint.Style.STROKE);
-		//	paint.setStyle(Paint.Style.FILL);	
+			//	paint.setStyle(Paint.Style.FILL);	
 			for (Ball b:enemyPool)
 			{
 				DrawTrace(b, canvas);
+				//foot trace
+				DrawFootTraces(b, canvas);
 			}
+		//	paint.setAlpha(180);
 			for (Ball b:enemyPool)
 			{
 				//DrawBall(b, canvas);
 
 				DrawEnemy(b, canvas);
 			}
-		
+			paint.setAlpha(255);
 			for (Ball eb:eBulletPool)
 			{
 				DrawBall(eb, canvas);
@@ -661,6 +677,8 @@ public class MainActivity extends Activity
 					a.x += a.vx;
 					a.y += a.vy;
 				}
+				//check  and update foot trace
+				checkFootTraceAndUpdate(a);
 				/*
 				 //敌人移动
 				 a.x += a.vx;
@@ -718,7 +736,7 @@ public class MainActivity extends Activity
 				//从下面来
 				a.x = (float)Math.random() * UtilityHelper.SCREEN_WIDTH;
 				a.y = UtilityHelper.SCREEN_HEIGHT;
-				a.vy = (-1) * (Math.random() *4  + 1);
+				a.vy = (-1) * (Math.random() * 4  + 1);
 				a.vx = 0;
 				a.RotateSkin(0);
 			}
@@ -731,6 +749,47 @@ public class MainActivity extends Activity
 				a.vy = 0;
 				a.RotateSkin(270);
 			}
+
+		}
+		private void checkFootTraceAndUpdate(Ball a)
+		{
+			ArrayList<FootTrace> todels=new ArrayList<FootTrace>();
+			for (FootTrace ft:a.FootTraces)
+			{
+				ft.Perform();
+				if (ft.ReachLimitation())
+					todels.add(ft);
+			}
+			for (FootTrace del:todels)
+			{
+				a.FootTraces.remove(del);
+			}
+
+
+			if (a.FootTraces.size() == 0)
+			{
+				FootTrace ft=new FootTrace(a.x,
+										   a.y, a.radius);
+				a.FootTraces.add(ft);
+			}
+			else
+			{
+				int lastIdx=a.FootTraces.size() - 1;
+				FootTrace last=	a.FootTraces.get(lastIdx);
+				if (last.GetDistance(a.x, a.y) > 8)
+				{
+					if (lastIdx > 30)
+					{
+						a.FootTraces.remove(0);
+					}
+					FootTrace ft=new FootTrace(a.x,
+											   a.y, a.radius);
+					a.FootTraces.add(ft);
+					
+				}
+			}
+
+
 		}
 		private void bonusUpdate()
 		{
@@ -751,7 +810,7 @@ public class MainActivity extends Activity
 		{
 			bonus.x = (float)(Math.random() * (UtilityHelper.SCREEN_WIDTH - 200) + 100);
 			bonus.y = (float)(Math.random() * (UtilityHelper.SCREEN_HEIGHT - 200) + 100);
-		//	bonus.radius = 1;
+			//	bonus.radius = 1;
 
 		}
 		private void restartships(Ball b, float left, float right, float vx, float vy)
@@ -1094,11 +1153,13 @@ public class MainActivity extends Activity
             public double vx = 0, vy = 0;
 
             public boolean dragging = false;
+			public ArrayList<FootTrace> FootTraces=null;
 
             public Ball(double x, double y, double radius)
             {
                 super(x, y, radius);
 				traceList = new ArrayList<Ball>();
+				this.FootTraces = new ArrayList<FootTrace>();
             }
 			protected boolean isInBall(float x, float y)
 			{
@@ -1112,7 +1173,7 @@ public class MainActivity extends Activity
 				if (skin != null)
 				{
 					int skinWidth=skin.getWidth();
-					if (scale>=1)
+					if (scale >= 1)
 						increase = -1;
 					else if (scale <= 0.8)
 					{
@@ -1120,19 +1181,19 @@ public class MainActivity extends Activity
 					}
 					//	this.radius += increase * 1;
 					scale += (float)increase / 50;
-/*
-					int scaleWidth=(int) (scale * skinWidth);   
-					if (scaleWidth <= 0)
-					{
-						radius = 3;
-					}
-					else
-					*/
+					/*
+					 int scaleWidth=(int) (scale * skinWidth);   
+					 if (scaleWidth <= 0)
+					 {
+					 radius = 3;
+					 }
+					 else
+					 */
 					{
 
 						Matrix matrix = new Matrix();  
 						matrix.postScale(scale, scale);  
-						rotatedSkin = Bitmap.createBitmap(skin, 0, 0,skinWidth , skinWidth, matrix, true);   
+						rotatedSkin = Bitmap.createBitmap(skin, 0, 0, skinWidth , skinWidth, matrix, true);   
 						this.radius = rotatedSkin.getWidth() / 2;
 					}
 				}
@@ -1292,6 +1353,29 @@ public class MainActivity extends Activity
 				this.rotatedSkin = rotateBitmap(this.skin, angle);
 			}
         }
+		private class FootTrace extends Circle
+		{
+			private int maxradiu;
+
+			public FootTrace(double x, double y, double radius1)
+            {
+
+                super(x, y, 1);
+				maxradiu = (int)radius1;
+            }
+			public boolean ReachLimitation()
+			{
+				return	this.radius >= maxradiu;
+			}
+			public void Perform()
+			{
+				this.radius += 2;
+			}
+			public double GetDistance(float x1, float y1)
+			{
+				return Math.sqrt((x1 - x) * (x1 - x) + (y1 - y) * (y1 - y));
+			}
+		}
 		private class MyPlane extends Ball
 		{
 			public MyPlane(double x, double y, double radius)

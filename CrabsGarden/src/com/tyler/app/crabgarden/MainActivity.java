@@ -77,9 +77,9 @@ public class MainActivity extends Activity
 		UtilityHelper.SCREEN_HEIGHT = dm.heightPixels; // 获取具体的屏幕分辨率数??
 		UtilityHelper.SCREEN_WIDTH = dm.widthPixels;
 		//prepare bmps
-		e20bmp = processBMP(R.drawable.fish20); 
-		e30bmp = processBMP(R.drawable.fish30);
-		e40bmp = processBMP(R.drawable.fish40);
+		e20bmp = processBMP(R.drawable.crab20); 
+		e30bmp = processBMP(R.drawable.crab30);
+		e40bmp = processBMP(R.drawable.crab40);
 		p56bmp = processBMP(R.drawable.p56);
 
 		myplaneBMPOri = p56bmp;
@@ -310,34 +310,35 @@ public class MainActivity extends Activity
 			    b.color1 = 2;
 				b.color2 = 3;
 				//bmp skin
-				Bitmap bmpSkin=scaleBMP( processBMP(R.drawable.unkown),0.35f);
+				Bitmap bmpSkin=scaleBMP(processBMP(R.drawable.unkown), 0.35f);
 				switch (i)
 				{
 					case(0):
-						bmpSkin =scaleBMP( processBMP(R.drawable.bonusbox),0.25f);
+						bmpSkin = scaleBMP(processBMP(R.drawable.bonusbox), 0.25f);
 						break;
 					case(1):
-						bmpSkin =scaleBMP( processBMP(R.drawable.bonus2),0.25f);
+						bmpSkin = scaleBMP(processBMP(R.drawable.bonus2), 0.25f);
 						break;
 					case(2):
-						bmpSkin = scaleBMP( processBMP(R.drawable.bomb),0.25f);
+						bmpSkin = scaleBMP(processBMP(R.drawable.bomb), 0.25f);
 						break;
 					case(3):
-						bmpSkin =scaleBMP( processBMP(R.drawable.killer),0.25f);
+						bmpSkin = scaleBMP(processBMP(R.drawable.killer), 0.25f);
 						break;
-					
+
 				}
 				b.radius = bmpSkin.getWidth() / 2;
 				b.skin = bmpSkin;
 				bonousPool.add(b);
 			}
 		}
-		private Bitmap scaleBMP(Bitmap bmp,float scale){
+		private Bitmap scaleBMP(Bitmap bmp, float scale)
+		{
 
 			Matrix matrix = new Matrix();  
 			matrix.postScale(scale, scale);  
 			int chgWidth=(int)(bmp.getWidth());//*scale);
-			
+
 			Bitmap chgBmp = Bitmap.createBitmap(bmp, 0, 0, chgWidth, chgWidth, matrix, true);   
 			return chgBmp;
 		}
@@ -407,24 +408,25 @@ public class MainActivity extends Activity
 		private void DrawTrace(Ball enemy, Canvas canvas)
 		{
 			/*
-		  	for (Ball tr:enemy.traceList)
-			{
-				
-				paint.setColor(Color.RED);
-				//	paint.setAlpha(100);
-				tr.draw(canvas, paint);
-				//	paint.setAlpha(255);
-			}
-			*/
+			 for (Ball tr:enemy.traceList)
+			 {
+
+			 paint.setColor(Color.RED);
+			 //	paint.setAlpha(100);
+			 tr.draw(canvas, paint);
+			 //	paint.setAlpha(255);
+			 }
+			 */
 			paint.setStyle(Paint.Style.STROKE);
 			paint.setStrokeWidth(10);
 			paint.setColor(Color.BLUE);
 			paint.setAlpha(100);
-			for(int i=0;i<enemy.traceList.size()-1;i++){
-				Ball b2=enemy.traceList.get(i+1);
+			for (int i=0;i < enemy.traceList.size() - 1;i++)
+			{
+				Ball b2=enemy.traceList.get(i + 1);
 				Ball b1=enemy.traceList.get(i);
-				
-				canvas.drawLine(b1.x,b1.y,b2.x,b2.y,paint);
+
+				canvas.drawLine(b1.x, b1.y, b2.x, b2.y, paint);
 			}
 			paint.setAlpha(255);
 			paint.setStrokeWidth(5);
@@ -433,6 +435,8 @@ public class MainActivity extends Activity
 		{
 			Ball b=myPlane;
 			//	DrawTrace(myPlane,canvas);
+		//	int alpha=(int)Math.random() * 55 + 200;
+		//	paint.setAlpha(alpha);
 			b.DrawSkin(canvas, paint);
 
 			//		rgbColor(colors[myPlane.color1]);
@@ -445,8 +449,8 @@ public class MainActivity extends Activity
 			for (Ball b:bonousPool)
 			{
 				b.DrawSkin(canvas, paint);
-			//	paint.setStyle(Paint.Style.STROKE);
-			//	DrawBall(b,canvas);
+				//	paint.setStyle(Paint.Style.STROKE);
+				//	DrawBall(b,canvas);
 				//DrawBall(ball,canvas);
 				/*
 				 rgbColor(colors[b.color1]);
@@ -506,18 +510,19 @@ public class MainActivity extends Activity
 			DrawBonus(canvas);
 			paint.setStrokeWidth(3);
 			paint.setStyle(Paint.Style.STROKE);
-		//	paint.setStyle(Paint.Style.FILL);	
+			//	paint.setStyle(Paint.Style.FILL);	
 			for (Ball b:enemyPool)
 			{
 				DrawTrace(b, canvas);
 			}
+
 			for (Ball b:enemyPool)
 			{
 				//DrawBall(b, canvas);
 
 				DrawEnemy(b, canvas);
 			}
-		
+			paint.setAlpha(255);
 			for (Ball eb:eBulletPool)
 			{
 				DrawBall(eb, canvas);
@@ -751,7 +756,7 @@ public class MainActivity extends Activity
 		{
 			bonus.x = (float)(Math.random() * (UtilityHelper.SCREEN_WIDTH - 200) + 100);
 			bonus.y = (float)(Math.random() * (UtilityHelper.SCREEN_HEIGHT - 200) + 100);
-		//	bonus.radius = 1;
+			//	bonus.radius = 1;
 
 		}
 		private void restartships(Ball b, float left, float right, float vx, float vy)
@@ -1112,7 +1117,7 @@ public class MainActivity extends Activity
 				if (skin != null)
 				{
 					int skinWidth=skin.getWidth();
-					if (scale>=1)
+					if (scale >= 1)
 						increase = -1;
 					else if (scale <= 0.8)
 					{
@@ -1120,19 +1125,19 @@ public class MainActivity extends Activity
 					}
 					//	this.radius += increase * 1;
 					scale += (float)increase / 50;
-/*
-					int scaleWidth=(int) (scale * skinWidth);   
-					if (scaleWidth <= 0)
-					{
-						radius = 3;
-					}
-					else
-					*/
+					/*
+					 int scaleWidth=(int) (scale * skinWidth);   
+					 if (scaleWidth <= 0)
+					 {
+					 radius = 3;
+					 }
+					 else
+					 */
 					{
 
 						Matrix matrix = new Matrix();  
 						matrix.postScale(scale, scale);  
-						rotatedSkin = Bitmap.createBitmap(skin, 0, 0,skinWidth , skinWidth, matrix, true);   
+						rotatedSkin = Bitmap.createBitmap(skin, 0, 0, skinWidth , skinWidth, matrix, true);   
 						this.radius = rotatedSkin.getWidth() / 2;
 					}
 				}
