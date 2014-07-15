@@ -58,6 +58,7 @@ public class MainActivity extends Activity
 	Bitmap e40bmp;
 	Bitmap p56bmp;
 	Bitmap myplaneBMPOri;
+	Bitmap startBMP;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -80,6 +81,7 @@ public class MainActivity extends Activity
 		e20bmp = processBMP(R.drawable.tor40); 
 		e30bmp = processBMP(R.drawable.tor40);
 		e40bmp = processBMP(R.drawable.tor60);
+		startBMP=processBMP(R.drawable.toricon);
 		p56bmp = processBMP(R.drawable.p56);
 
 		myplaneBMPOri = p56bmp;
@@ -89,7 +91,7 @@ public class MainActivity extends Activity
 
 		physics = new BallPhysics(this);
         LayoutParams full = new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
-        physics.setBackgroundDrawable(getResources().getDrawable(R.drawable.bg));
+     //   physics.setBackgroundDrawable(getResources().getDrawable(R.drawable.bg));
 		addContentView(physics, full);
         mainActivity = this;
 
@@ -254,8 +256,9 @@ public class MainActivity extends Activity
 			initialEnemy();
 
             timer = new Timer(30, this);
-            timer.start();
-
+           // timer.start();
+timer.isPaused=true;
+		   //timer.pause();
         }
 		private void InitialMyPlane()
 		{
@@ -506,9 +509,13 @@ public class MainActivity extends Activity
 		private void DrawFootTraces(Ball ball, Canvas canvas)
 		{
 			paint.setColor(Color.WHITE);
-			paint.setAlpha(80);
+		//	paint.setAlpha(80);
 			for (FootTrace ft:ball.FootTraces)
 			{
+				float k=-1*((float)235)/(ft.maxradiu-1);
+				float b=255-k;
+				int a=(int)(k*ft.radius+b);
+				paint.setAlpha(a);
 				ft.draw(canvas, paint);
 			}
 			paint.setAlpha(255);
@@ -516,6 +523,13 @@ public class MainActivity extends Activity
         @Override
         protected void onDraw(Canvas canvas)
         {
+			if(timer.isPaused||timer.isStopped){
+			    float left=UtilityHelper.SCREEN_WIDTH/2-startBMP.getWidth()/2;
+				float top=UtilityHelper.SCREEN_HEIGHT/2-startBMP.getHeight()/2;
+				canvas.drawBitmap(startBMP,left,top,paint);
+				canvas.drawText("Touch any place...Start!",left,top+startBMP.getHeight(),paint);
+				return;
+			}
 			DrawBonus(canvas);
 			paint.setStrokeWidth(3);
 			paint.setStyle(Paint.Style.STROKE);
@@ -563,9 +577,10 @@ public class MainActivity extends Activity
 
         private void update()
         {
-			//	boolean issame;
-			//	if (startremove)
-			//    	needremove.clear();
+			if(timer.isPaused||timer.isStopped){
+				return;
+			}
+		
 			bonusUpdate();
 			myPlaneUpdate();
 			myBulletUpdate();
@@ -1030,6 +1045,14 @@ public class MainActivity extends Activity
         @Override
         public boolean onTouchEvent(MotionEvent event)
         {
+			if(timer.isPaused ||timer.isStopped)
+			{
+				this.setBackgroundDrawable(getResources().getDrawable( R.drawable.bg));
+				timer.start();
+				timer.isPaused=false;
+				timer.isStopped=false;
+				return true;
+			}
 			int touchcount= event.getPointerCount();
 			if (touchcount > 2)
 				autoshot = !autoshot;
@@ -1038,7 +1061,6 @@ public class MainActivity extends Activity
 			{
 				float x=event.getX(i);
 				float y=event.getY(i);
-
 				int action=event.getAction();
 				switch (action)
 				{
@@ -1355,7 +1377,7 @@ public class MainActivity extends Activity
         }
 		private class FootTrace extends Circle
 		{
-			private int maxradiu;
+			public int maxradiu;
 
 			public FootTrace(double x, double y, double radius1)
             {
