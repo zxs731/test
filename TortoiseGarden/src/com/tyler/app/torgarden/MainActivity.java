@@ -258,7 +258,7 @@ public class MainActivity extends Activity
             timer = new Timer(30, this);
            // timer.start();
 timer.isPaused=true;
-		   //timer.pause();
+		   timer.pause();
         }
 		private void InitialMyPlane()
 		{
