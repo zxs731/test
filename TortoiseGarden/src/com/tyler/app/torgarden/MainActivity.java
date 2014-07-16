@@ -527,6 +527,8 @@ timer.isPaused=true;
 			    float left=UtilityHelper.SCREEN_WIDTH/2-startBMP.getWidth()/2;
 				float top=UtilityHelper.SCREEN_HEIGHT/2-startBMP.getHeight()/2;
 				canvas.drawBitmap(startBMP,left,top,paint);
+				paint.setTextSize(40);
+				
 				canvas.drawText("Touch any place...Start!",left,top+startBMP.getHeight(),paint);
 				return;
 			}
