@@ -82,24 +82,15 @@ public class MainActivity extends Activity
 
 
         setContentView(R.layout.activity_android_ball_physics);
-
+//bmps
+		PrepareBMPResources();
 		physics = new BallPhysics(this);
         LayoutParams full = new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
 		physics.setBackgroundDrawable(getResources().getDrawable(R.drawable.bg));
         addContentView(physics, full);
         mainActivity = this;
 
-		//	BitmapFactory.Options opt = new BitmapFactory.Options();
-//		opt.inPreferredConfig = Config.ALPHA_8;
-		e20bmp = processBMP(R.drawable.f240); //BitmapFactory.decodeResource(getResources(), R.drawable.enemy20);  
-		e30bmp = processBMP(R.drawable.f340);
-		e40bmp = processBMP(R.drawable.f440);// BitmapFactory.decodeResource(getResources(), R.drawable.enemy40);
-		e1240bmp = processBMP(R.drawable.f1240);
-		e1340bmp = processBMP(R.drawable.f1340);
-		e1440bmp = processBMP(R.drawable.f1440);
-		p56bmp = processBMP(R.drawable.f140);// BitmapFactory.decodeResource(getResources(), R.drawable.p56);
-		p156bmp = processBMP(R.drawable.f1140);
-		//    p56bmp.eraseColor(Color.BLACK);
+		
 
 
         //new thread
@@ -119,6 +110,18 @@ public class MainActivity extends Activity
 
 
     }
+	private void PrepareBMPResources(){
+
+		e20bmp = processBMP(R.drawable.f240);
+		e30bmp = processBMP(R.drawable.f340);
+		e40bmp = processBMP(R.drawable.f440);
+		e1240bmp = processBMP(R.drawable.f1240);
+		e1340bmp = processBMP(R.drawable.f1340);
+		e1440bmp = processBMP(R.drawable.f1440);
+		p56bmp = processBMP(R.drawable.f140);
+		p156bmp = processBMP(R.drawable.f1140);
+		
+	}
 	private Bitmap processBMP(int resId)
 	{
 		Bitmap bmp = BitmapFactory.decodeResource(getResources(), resId);
@@ -273,8 +276,8 @@ public class MainActivity extends Activity
 			myPlane.color2 = 1;
 			//pool.add(myPlane);
 		}
-		
-		
+
+
 		private void initialEnemy()
 		{
 			for (int i=0;i < 10;i++)
@@ -282,6 +285,7 @@ public class MainActivity extends Activity
 				//Ball eb=new Ball(Math.random() * UtilityHelper.SCREEN_WIDTH
 				//					 , 0, 15 + Math.random() * 20);
 				Ball eb=null;
+				/*
 				if (Math.random() * 10 > 5)
 				{
 					eb = new Ball(0, Math.random() * UtilityHelper.SCREEN_HEIGHT
@@ -293,8 +297,11 @@ public class MainActivity extends Activity
 				{
 					eb = new Ball(UtilityHelper.SCREEN_WIDTH, Math.random() * UtilityHelper.SCREEN_HEIGHT
 								  , 15 + Math.random() * 20);
-					eb.vx = (-1) *( Math.random() * 10);
+					eb.vx = (-1) * (Math.random() * 10);
 				}
+				*/
+				eb=new Ball(10,10,20);
+				ResetEnemy(eb);
 				eb.color1 = 6;
 				eb.color2 = 4;
 				eb.vy = 0;//Math.random() * 10;
@@ -303,7 +310,52 @@ public class MainActivity extends Activity
 			}
 		}
 
+		private void ResetEnemy(Ball eb)
+		{
+			if (Math.random() * 10 > 5)
+			{
 
+				eb.x = 0;
+				eb.y = (float)Math.random() * UtilityHelper.SCREEN_HEIGHT;
+				eb.skin=getRandom(false);
+				eb.vx = Math.random() * 10;
+
+			}
+			else
+			{
+				
+				eb.x=UtilityHelper.SCREEN_WIDTH;
+				eb.y= (float)Math.random() * UtilityHelper.SCREEN_HEIGHT;
+				eb.skin=getRandom(true);
+				eb.vx = (-1) * (Math.random() * 10);
+			}
+			eb.radius=(float)eb.skin.getWidth()/2;
+			eb.color1 = 6;
+			eb.color2 = 4;
+			eb.vy = 0;//Math.random() * 10;
+		}
+		private Bitmap getRandom(boolean direct){
+			double r=Math.random()*10;
+			if(r<=3)
+			{
+				if(direct)
+				return e20bmp;
+				else
+				return e1240bmp;
+			}else if (r>3 && r<=6)
+			{
+				if(direct)
+					return e30bmp;
+					else
+					return e1340bmp;
+			}else 
+			{
+				if(direct){
+					return e40bmp;
+				}else
+				return e1440bmp;
+			}
+		}
         @Override
         public void tick()
         {
@@ -338,17 +390,20 @@ public class MainActivity extends Activity
 			//	rgbColor(colors[myPlane.color2]);
 			//canvas.drawCircle(myPlane.x, myPlane.y, (float)(myPlane.radius * Constants.oneByGoldenRatio), paint);
 		}
-		private void DrawEnemy(Ball myPlane, Canvas canvas)
+		private void DrawEnemy(Ball e, Canvas canvas)
 		{
+			/*
 			Ball b=myPlane;
 			if (b.vx < 0)
 			{
+				
 				if (b.radius >= 15 && b.radius <= 21)
 					canvas.drawBitmap(e20bmp, b.x - e20bmp.getWidth() / 2, b.y - e20bmp.getHeight() / 2, paint);
 				else if (b.radius > 21 && b.radius <= 29)
 					canvas.drawBitmap(e30bmp, b.x - e30bmp.getWidth() / 2, b.y - e30bmp.getHeight() / 2, paint);
 				else 
 					canvas.drawBitmap(e40bmp, b.x - e40bmp.getWidth() / 2, b.y - e40bmp.getHeight() / 2, paint);
+				
 			}
 			else
 			{
@@ -360,6 +415,11 @@ public class MainActivity extends Activity
 				else 
 					canvas.drawBitmap(e1440bmp, b.x - e1440bmp.getWidth() / 2, b.y - e1440bmp.getHeight() / 2, paint);
 			}
+			*/
+
+			Bitmap bmp=e.skin;
+			if(bmp!=null)
+			canvas.drawBitmap(bmp, e.x - bmp.getWidth() / 2, e.y - bmp.getHeight() / 2, paint);
 			//		rgbColor(colors[myPlane.color1]);
 			//		myPlane.draw(canvas, paint);
 			//	rgbColor(colors[myPlane.color2]);
@@ -593,7 +653,7 @@ public class MainActivity extends Activity
 				//bounds check
 				if (a.x > getWidth() || a.x < 0)
 				{
-
+/*
 					a.y = (float)Math.random() * UtilityHelper.SCREEN_HEIGHT;
 					if (Math.random() * 10 > 5)
 					{
@@ -606,6 +666,8 @@ public class MainActivity extends Activity
 						a.vx = (-1) * Math.random() * 10;
 					}
 					a.vy = 0;
+					*/
+					ResetEnemy(a);
 					continue;
 				}	
 				//撞毁
@@ -613,6 +675,7 @@ public class MainActivity extends Activity
 				{
 					//	clear.add(a);
 					crash = true;
+					/*
 					a.y =  (float)Math.random() * UtilityHelper.SCREEN_WIDTH;
 					if (Math.random() * 10 > 5)
 					{
@@ -625,6 +688,8 @@ public class MainActivity extends Activity
 						a.vx = (-1) * Math.random() * 10;
 					}
 					a.vy = 0;
+					*/
+					ResetEnemy(a);
 					life -= 5;
 					continue;
 				}
@@ -633,19 +698,19 @@ public class MainActivity extends Activity
 				a.y += a.vy;
 				//发射
 				/*
-				if (Math.random() * 100 > 97)
-				{
-					Ball ebu=new Ball(a.x, a.y, 5);
-					ebu.color1 = 6;
-					ebu.color2 = 5;
-			        if (myPlane.y < a.y)
-					    ebu.vy = (-1) * (a.vy + 20);
-					else
-						ebu.vy = a.vy + 20;
-					ebu.vx =	(myPlane.x - ebu.x) / ((myPlane.y - ebu.y) / ebu.vy);
-					eBulletPool.add(ebu);
-				}
-*/
+				 if (Math.random() * 100 > 97)
+				 {
+				 Ball ebu=new Ball(a.x, a.y, 5);
+				 ebu.color1 = 6;
+				 ebu.color2 = 5;
+				 if (myPlane.y < a.y)
+				 ebu.vy = (-1) * (a.vy + 20);
+				 else
+				 ebu.vy = a.vy + 20;
+				 ebu.vx =	(myPlane.x - ebu.x) / ((myPlane.y - ebu.y) / ebu.vy);
+				 eBulletPool.add(ebu);
+				 }
+				 */
 
 			}
 			//	if (clear.size() > 0)
@@ -742,7 +807,7 @@ public class MainActivity extends Activity
 
 			// gravity
 			a.vx += gravity.y;
-			a.vy +=(-1 )*gravity.x;
+			a.vy += (-1) * gravity.x;
 
 			//bounds check
 			if (a.x < a.radius) a.x = a.radius;
@@ -797,24 +862,24 @@ public class MainActivity extends Activity
 			a.vx += fx;
 			a.vy += fy;
 
-			a.x += a.vx/2;
-			a.y += a.vy/2;
+			a.x += a.vx / 2;
+			a.y += a.vy / 2;
 
 
-		//	if (startremove)
-		//		dispear(needremove, eBulletPool);
-				/*
-			if (autoshot)
-			{
-				if (myPlane.vx != 0 || myPlane.vy != 0)
-				{
-					Ball bu=new Ball(myPlane.x, myPlane.y, 8);
-					bu.vx = myPlane.vx;
-					bu.vy = 40;
-					myBulletPool.add(bu);
-				}
-			}
-			*/
+			//	if (startremove)
+			//		dispear(needremove, eBulletPool);
+			/*
+			 if (autoshot)
+			 {
+			 if (myPlane.vx != 0 || myPlane.vy != 0)
+			 {
+			 Ball bu=new Ball(myPlane.x, myPlane.y, 8);
+			 bu.vx = myPlane.vx;
+			 bu.vy = 40;
+			 myBulletPool.add(bu);
+			 }
+			 }
+			 */
         }
 		private void dispear(ArrayList<Ball> balls, ArrayList<Ball> pool)
 		{
@@ -892,21 +957,21 @@ public class MainActivity extends Activity
 				 */
 				myPlane.touchMove(x, y);
 				/*
-				if (!autoshot)
-				{
-					if (!myPlane.isInBall(x, y))
-					{
-						Ball bu=new Ball(myPlane.x, myPlane.y, 5);
-					
-						bu.vy=myPlane.vy;
-						if (x > myPlane.x)
-							bu.vx = 40;
-						else if (x < myPlane.x)
-							bu.vx = -40;
-						myBulletPool.add(bu);
-					}
-				}
-				*/
+				 if (!autoshot)
+				 {
+				 if (!myPlane.isInBall(x, y))
+				 {
+				 Ball bu=new Ball(myPlane.x, myPlane.y, 5);
+
+				 bu.vy=myPlane.vy;
+				 if (x > myPlane.x)
+				 bu.vx = 40;
+				 else if (x < myPlane.x)
+				 bu.vx = -40;
+				 myBulletPool.add(bu);
+				 }
+				 }
+				 */
 			}
 
             return true;
@@ -953,6 +1018,7 @@ public class MainActivity extends Activity
 
             public boolean dragging = false;
 
+			public Bitmap skin;
             public Ball(double x, double y, double radius)
             {
                 super(x, y, radius);
@@ -961,6 +1027,7 @@ public class MainActivity extends Activity
 			{
 				return radius > Math.sqrt((this.x - x) * (this.x - x) + (this.y - y) * (this.y - y));
 			}
+
         }
 		private class MyPlane extends Ball
 		{
