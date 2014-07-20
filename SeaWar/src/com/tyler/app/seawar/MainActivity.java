@@ -61,6 +61,8 @@ public class MainActivity extends Activity
 	Bitmap e1340bmp;
 	Bitmap e1440bmp;
 	Bitmap p156bmp;
+	private ArrayList<Bitmap> leftBMPList;
+	private ArrayList<Bitmap> rightBMPList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -111,13 +113,39 @@ public class MainActivity extends Activity
 
     }
 	private void PrepareBMPResources(){
-
+		leftBMPList=new ArrayList<Bitmap>();
+		rightBMPList=new ArrayList<Bitmap>();
+		leftBMPList.add(processBMP(R.drawable.f1240));
+		leftBMPList.add(processBMP(R.drawable.f1340));
+		leftBMPList.add(processBMP(R.drawable.f1440));
+		//leftBMPList.add(processBMP(R.drawable.f540));
+		//leftBMPList.add(processBMP(R.drawable.f640));
+		leftBMPList.add(processBMP(R.drawable.f740));
+		leftBMPList.add(processBMP(R.drawable.f840));
+		leftBMPList.add(processBMP(R.drawable.f940));
+		leftBMPList.add(processBMP(R.drawable.f950));
+		leftBMPList.add(processBMP(R.drawable.f960));
+		leftBMPList.add(processBMP(R.drawable.f970));
+		
+		rightBMPList.add( processBMP(R.drawable.f240));
+		rightBMPList.add( processBMP(R.drawable.f340));
+		rightBMPList.add( processBMP(R.drawable.f440));
+		//rightBMPList.add( processBMP(R.drawable.f1540));
+		//rightBMPList.add( processBMP(R.drawable.f1640));
+		rightBMPList.add( processBMP(R.drawable.f1740));
+		rightBMPList.add( processBMP(R.drawable.f1840));
+		rightBMPList.add( processBMP(R.drawable.f1940));
+		rightBMPList.add( processBMP(R.drawable.f1950));
+		rightBMPList.add( processBMP(R.drawable.f1960));
+		rightBMPList.add( processBMP(R.drawable.f1970));
+		/*
 		e20bmp = processBMP(R.drawable.f240);
 		e30bmp = processBMP(R.drawable.f340);
 		e40bmp = processBMP(R.drawable.f440);
 		e1240bmp = processBMP(R.drawable.f1240);
 		e1340bmp = processBMP(R.drawable.f1340);
 		e1440bmp = processBMP(R.drawable.f1440);
+		*/
 		p56bmp = processBMP(R.drawable.f140);
 		p156bmp = processBMP(R.drawable.f1140);
 		
@@ -186,6 +214,8 @@ public class MainActivity extends Activity
 		private ArrayList<Ball> enemyPool;
 		private ArrayList<Ball> myBulletPool;
 		private ArrayList<Ball> eBulletPool;
+		private ArrayList<Ball> bubblePool;
+		
 		private MyPlane myPlane;
         private int maxBalls = 400;
 		private int maxBallsswitch=40;
@@ -212,6 +242,7 @@ public class MainActivity extends Activity
 		private int tscore=0;
 		Timer timer;
 		boolean autoshot=false;
+		
 
 
         public BallPhysics(Context context)
@@ -259,6 +290,7 @@ public class MainActivity extends Activity
 			myBulletPool = new ArrayList<Ball>();
 			eBulletPool = new ArrayList<Ball>();
 			enemyPool = new ArrayList<Ball>();
+			bubblePool= new ArrayList<Ball>();
 			//    initalFuncBalls();
 			InitialMyPlane();
 			initialEnemy();
@@ -335,7 +367,13 @@ public class MainActivity extends Activity
 			eb.vy = 0;//Math.random() * 10;
 		}
 		private Bitmap getRandom(boolean direct){
-			double r=Math.random()*10;
+			int size=rightBMPList.size();
+			int i=(int)(Math.random()*size);
+			if(direct)
+				return rightBMPList.get(i);
+			else
+				return leftBMPList.get(i);
+			/*
 			if(r<=3)
 			{
 				if(direct)
@@ -355,6 +393,7 @@ public class MainActivity extends Activity
 				}else
 				return e1440bmp;
 			}
+			*/
 		}
         @Override
         public void tick()
@@ -454,6 +493,18 @@ public class MainActivity extends Activity
 			 paint.setStyle(Paint.Style.STROKE);
 			 */
 		}
+		private void DrawBubbles(Canvas canvas)
+		{
+			paint.setStrokeWidth(2);
+			rgbColor(colors[6]);
+			
+			for(Ball b:bubblePool)
+			{
+				paint.setAlpha(b.alpha);	
+				b.draw(canvas,paint);
+			}
+			paint.setAlpha(255);
+		}
         @Override
         protected void onDraw(Canvas canvas)
         {
@@ -465,6 +516,7 @@ public class MainActivity extends Activity
 
 				DrawEnemy(b, canvas);
 			}
+			DrawBubbles(canvas);
 			paint.setStyle(Paint.Style.FILL);
 			for (Ball eb:eBulletPool)
 			{
@@ -487,116 +539,6 @@ public class MainActivity extends Activity
 			paint.setColor(Color.WHITE);
 			paint.setTextSize(30); 
 			canvas.drawText(gmsg, 5, 25, paint);	
-
-			/*
-			 //  int id = colorId;
-			 int ballsarea=0;
-			 totalArea = getHeight() * getWidth();
-			 for (Ball b : pool)
-			 {
-			 ballsarea += getBallArea(b);
-			 rgbColor(colors[b.color1]);
-
-			 b.draw(canvas, paint);
-			 paint.setShader(null);
-
-			 //change to circle color
-			 rgbColor(colors[b.color2]);
-
-			 float bcx=b.x;
-			 float bcy=b.y;
-			 //draw circle
-			 canvas.drawCircle(b.x, b.y, (float)(b.radius * Constants.oneByGoldenRatio), paint);
-
-			 //canvas.drawRect(new RectF(b.x-c, b.y-c, b.x+c, b.y+(b.radius-c)), paint);
-			 paint.setShader(null);
-			 //draw circle end
-			 paint.setColor(Color.BLACK);
-			 //canvas.drawText(b.color1+","+b.color2, b.x, b.y, paint);
-			 }
-			 */
-			/*
-			 if (colorId > 0)
-			 {
-			 //draw score
-			 java.util.Date now = new java.util.Date(System.currentTimeMillis());
-			 float timeUsing = ((float) (now.getTime() - starttime
-			 .getTime()) / 1000);
-			 timeUsing = (float) (Math.round(timeUsing * 10)) / 10;
-			 String msg = statusmsg. replace("{0}",
-			 timeUsing + "")
-			 .replace("{1}", score + "")
-			 .replace("{2}", startremove + "")
-			 .replace("{3}", pool.size() + "")
-			 //	.replace("{4}",maxBallsswitch+"");
-			 .replace("{4}", ballsarea * 100 / totalArea + "%");
-			 //paint.setTextAlign(Align.CENTER);
-			 paint.setTextSize(18); 
-			 paint.setColor(Color.WHITE);
-			 canvas.drawText(msg, 35, 15, paint);
-			 //彩球顺序
-			 for (int ii=0;ii < 20;ii++)
-			 {
-
-			 int x=ii * 20 + 40;
-			 Ball nb=new Ball(x, 40, 10);
-			 rgbColor(colors[(colorId + 1 + ii) % colors.length]);
-			 nb.draw(canvas, paint);
-			 rgbColor(colors[(colorId + 2 + ii) % colors.length]);
-			 canvas.drawCircle(nb.x, nb.y, (float)(nb.radius * Constants.oneByGoldenRatio), paint);
-
-			 }
-			 //垂直顺序
-			 drawvballs(canvas);
-			 }
-			 */
-			//draw comments x;y
-			/*
-			 for(Ball b:pool)
-			 {
-			 //radial line
-			 paint.setColor(Color.WHITE);
-			 canvas.drawLine(b.x,b.y,b.x+b.radius,b.y-b.radius,paint);
-			 canvas.drawLine(b.x+b.radius,b.y-b.radius,b.x+b.radius+65,b.y-b.radius,paint);
-			 canvas.drawText(""+(int)b.x+";"+(int)b.y, b.x+b.radius+5, b.y-b.radius-5, paint);
-			 }
-			 */
-
-			/*
-			 //x.y.z gravity value print
-			 String gmsg="x={1}, y={2}, z={3}";
-			 gmsg=gmsg.replace("{1}",""+gx)
-			 .replace("{2}",""+gy)
-			 .replace("{3}",""+gz);
-			 paint.setColor(Color.WHITE);
-			 paint.setTextSize(20); 
-			 canvas.drawText(gmsg, 5, 45, paint);
-			 */
-			/*
-			 biga.Point p0=new biga.Point();
-			 p0.x = 200;
-			 p0.y = 350;
-			 biga.Point py=new biga.Point();
-			 biga.Point px=new biga.Point();
-			 biga.Point pz=new biga.Point();
-			 py.x = p0.x;
-			 py.y = p0.y + gy * 10 * (-1);
-			 px.x = p0.x + gx * 10;
-			 px.y = p0.y;
-			 float part=(float)(gz * 10 / Math.sqrt(2));
-			 pz.x = p0.x + part * (-1);
-			 pz.y = p0.y + part;
-			 paint.setStrokeWidth(5);
-			 canvas.drawLine(p0.x, p0.y, py.x, py.y, paint);
-			 canvas.drawLine(p0.x, p0.y, px.x, px.y, paint);
-			 canvas.drawLine(p0.x, p0.y, pz.x, pz.y, paint);
-			 paint.setStrokeWidth(0);
-			 canvas.drawText("y: " + gy + " (m/s2)", py.x + 20, py.y, paint);
-			 canvas.drawText("x: " + gx + " (m/s2)", px.x, px.y - 20, paint);
-			 canvas.drawText("z: " + gz + " (m/s2)", pz.x + 20, pz.y + 20, paint);
-
-			 drawFuncBalls(canvas);
-			 */
 		}
 
 
@@ -610,6 +552,28 @@ public class MainActivity extends Activity
 			myBulletUpdate();
 			enemyUpdate();
 			eBulletUpdate();
+			bubbleUpdate();
+		}
+		private void bubbleUpdate()
+		{
+			ArrayList<Ball > needRem=new ArrayList<Ball>();
+			for(Ball b:bubblePool)
+			{
+				if(b.x<0 ||b.x>UtilityHelper.SCREEN_WIDTH
+				||b.y<0 || b.y>UtilityHelper.SCREEN_HEIGHT)
+				{
+					needRem.add(b);
+				}else{
+					
+				
+				b.x+=b.vx;
+				b.y+=b.vy;
+				}
+			}
+			for(Ball b:needRem)
+			{
+				bubblePool.remove(b);
+			}
 		}
 		private void eBulletUpdate()
 		{
@@ -711,6 +675,17 @@ public class MainActivity extends Activity
 				 eBulletPool.add(ebu);
 				 }
 				 */
+				 //raise bubbles
+				if (Math.random() * 100 > 98)
+				{
+					Ball bb=new Ball(a.x, a.y, Math.random()*6+2);
+					bb.color1 = 6;
+					bb.color2 = 5;
+					bb.vx=0;
+					bb.vy=(-1)*(Math.random()*8+3);
+					bb.alpha=(int)(Math.random()*150+50);
+					bubblePool.add(bb);
+				}
 
 			}
 			//	if (clear.size() > 0)
@@ -1017,6 +992,7 @@ public class MainActivity extends Activity
             public double vx = 0, vy = 0;
 
             public boolean dragging = false;
+			public int alpha=255;
 
 			public Bitmap skin;
             public Ball(double x, double y, double radius)
