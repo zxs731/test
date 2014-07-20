@@ -273,6 +273,8 @@ public class MainActivity extends Activity
 			myPlane.color2 = 1;
 			//pool.add(myPlane);
 		}
+		
+		
 		private void initialEnemy()
 		{
 			for (int i=0;i < 10;i++)
@@ -291,7 +293,7 @@ public class MainActivity extends Activity
 				{
 					eb = new Ball(UtilityHelper.SCREEN_WIDTH, Math.random() * UtilityHelper.SCREEN_HEIGHT
 								  , 15 + Math.random() * 20);
-					eb.vx = (-1) * Math.random() * 10;
+					eb.vx = (-1) *( Math.random() * 10);
 				}
 				eb.color1 = 6;
 				eb.color2 = 4;
@@ -630,6 +632,7 @@ public class MainActivity extends Activity
 				a.x += a.vx;
 				a.y += a.vy;
 				//发射
+				/*
 				if (Math.random() * 100 > 97)
 				{
 					Ball ebu=new Ball(a.x, a.y, 5);
@@ -642,7 +645,7 @@ public class MainActivity extends Activity
 					ebu.vx =	(myPlane.x - ebu.x) / ((myPlane.y - ebu.y) / ebu.vy);
 					eBulletPool.add(ebu);
 				}
-
+*/
 
 			}
 			//	if (clear.size() > 0)
@@ -738,8 +741,8 @@ public class MainActivity extends Activity
 			a.vy *= damping;
 
 			// gravity
-			a.vx += gravity.x;
-			a.vy += gravity.y;
+			a.vx += gravity.y;
+			a.vy +=(-1 )*gravity.x;
 
 			//bounds check
 			if (a.x < a.radius) a.x = a.radius;
@@ -794,12 +797,13 @@ public class MainActivity extends Activity
 			a.vx += fx;
 			a.vy += fy;
 
-			a.x += a.vx;
-			a.y += a.vy;
+			a.x += a.vx/2;
+			a.y += a.vy/2;
 
 
-			if (startremove)
-				dispear(needremove, eBulletPool);
+		//	if (startremove)
+		//		dispear(needremove, eBulletPool);
+				/*
 			if (autoshot)
 			{
 				if (myPlane.vx != 0 || myPlane.vy != 0)
@@ -810,6 +814,7 @@ public class MainActivity extends Activity
 					myBulletPool.add(bu);
 				}
 			}
+			*/
         }
 		private void dispear(ArrayList<Ball> balls, ArrayList<Ball> pool)
 		{
@@ -886,17 +891,13 @@ public class MainActivity extends Activity
 				 return true;
 				 */
 				myPlane.touchMove(x, y);
+				/*
 				if (!autoshot)
 				{
 					if (!myPlane.isInBall(x, y))
 					{
 						Ball bu=new Ball(myPlane.x, myPlane.y, 5);
-						/*
-						if (y > myPlane.y)
-							bu.vy = 40;
-						else if (y < myPlane.y)
-							bu.vy = -40;//myPlane.vy;
-							*/
+					
 						bu.vy=myPlane.vy;
 						if (x > myPlane.x)
 							bu.vx = 40;
@@ -905,6 +906,7 @@ public class MainActivity extends Activity
 						myBulletPool.add(bu);
 					}
 				}
+				*/
 			}
 
             return true;
