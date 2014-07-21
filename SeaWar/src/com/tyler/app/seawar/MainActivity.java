@@ -603,8 +603,8 @@ public class MainActivity extends Activity
 			{
 				clear(eBulletPool, clear);
 			}
-			if (isHit)
-				vibrate();
+		//	if (isHit)
+		//		vibrate();
 		}
 		private void enemyUpdate()
 		{
@@ -693,7 +693,7 @@ public class MainActivity extends Activity
 			{
 				//	clear(enemyPool, clear);
 				//震动
-				vibrate();
+		//		vibrate();
 			}
 		}
 		private void vibrate()
